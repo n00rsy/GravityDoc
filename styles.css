@@ -1,0 +1,58 @@
+html, body {
+    height: 100%;
+    background-color:#dfe2e6;
+  }
+  
+  body {
+
+
+ }
+
+ h1{
+     font-size: 20px;
+ }
+ #docContainer{
+    margin-top:30vh;
+    width:100%;
+
+ }
+ #doc{
+    box-shadow: 0 0 5px 2px #bdbdbd;
+    margin-bottom:30vh;
+ }
+
+
+
+ /* Style the navbar */
+#navbar {
+    padding-top:10px;
+    padding-bottom:10px;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px 2px #bdbdbd;
+
+  }
+  
+#debug{
+    border: solid black 2px;
+
+}
+#docLogo{
+    height:50px;
+    width: auto;
+}
+  /* Page content */
+  .content {
+    padding: 16px;
+  }
+  
+  /* The sticky class is added to the navbar with JS when it reaches its scroll position */
+  .sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+  }
+  
+  /* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
+  .sticky + .content {
+    padding-top: 60px;
+  }
