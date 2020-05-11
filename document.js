@@ -17,7 +17,9 @@ var font = void 0,
     bodySize = void 0;
 var textOffsetX = void 0,
     textOffsetY = void 0;
-var gravityStrength = void 0;
+var gravityStrength = void 0,
+    exitForce = void 0,
+    random = void 0;
 var cursorBoundX = void 0;
 var cursorBoundY = void 0;
 
@@ -41,6 +43,8 @@ function setup() {
     world = engine.world;
 
     setGravityStrength();
+    setExitForce();
+    setRandom();
 
     var marginSize = width * 0.125;
 
@@ -59,6 +63,8 @@ function setup() {
     var options = {
         mouse: canvasmouse
     };
+    canvasmouse.element.removeEventListener("mousewheel", canvasmouse.mousewheel);
+    canvasmouse.element.removeEventListener("DOMMouseScroll", canvasmouse.mousewheel);
     mouseConstraint = Matter.MouseConstraint.create(engine, options);
     Matter.World.add(world, mouseConstraint);
 }
@@ -74,7 +80,6 @@ function undo() {
         letters[letters.length - 1].remove();
         deleted.push(letters.pop());
     }
-    cursor.stepBack(bodySize);
 }
 
 function redo() {
@@ -105,6 +110,7 @@ function shiftGravity(x) {
             world.gravity.x = gravityStrength;
             world.gravity.y = 0;
             break;
+        //up/down
         case 2:
             if (world.gravity.y == 0) {
                 world.gravity.y = world.gravity.x;
@@ -113,7 +119,6 @@ function shiftGravity(x) {
                 world.gravity.y = -world.gravity.y;
             }
             break;
-        // code block
     }
 }
 
@@ -154,9 +159,18 @@ function setGravityStrength() {
         world.gravity.x = gravityStrength;
     } else if (world.gravity.x < 0) {
         world.gravity.x = -gravityStrength;
-    } else {
+    } else if (world.gravity.y >= 0) {
         world.gravity.y = gravityStrength;
+    } else if (world.gravity.y < 0) {
+        world.gravity.y = -gravityStrength;
     }
+}
+
+function setExitForce() {
+    exitForce = document.getElementById("exitForce").value / 5;
+}
+function setRandom() {
+    random = document.getElementById("random").value / 14;
 }
 
 listener.simple_combo("ctrl z", function () {
@@ -168,25 +182,63 @@ listener.simple_combo("ctrl s", function () {
     saveDoc(document.getElementById("docTitle").textContent);
 });
 
+listener.simple_combo("ctrl n", function () {
+    newDoc();
+});
+
+function newDoc() {
+    window.open(window.location.href, '_blank');
+}
+
 window.addEventListener("keydown", function (e) {
     if (e.keyCode >= 186 && e.keyCode <= 192 || e.keyCode >= 65 && e.keyCode <= 90 || e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 219 && e.keyCode <= 222) {
         var c = e.key;
         cursor.step(bodySize);
-        letters.push(new Letter(cursor.x, cursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY));
+        var r = Math.random() * random - random / 2;
+        letters.push(new Letter(cursor.x, cursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY, exitForce, r));
     }
     //space
-    if (e.keyCode == 32) {
-        cursor.step(bodySize);
-        e.preventDefault();
-    }
-    //backspace
-    if (e.keyCode == 8) {
-        undo();
-    }
-    //enter
-    if (e.keyCode == 13) {
-        cursor.stepDown(bodySize);
-    }
+    else if (e.keyCode == 32) {
+            cursor.step(bodySize);
+            e.preventDefault();
+        }
+        //backspace
+        else if (e.keyCode == 8) {
+                undo();
+                cursor.stepBack(bodySize);
+            }
+            //enter
+            else if (e.keyCode == 13) {
+                    cursor.stepDown(bodySize);
+                }
+                //tab
+                else if (e.keyCode == 9) {
+                        cursor.step(bodySize);
+                        cursor.step(bodySize);
+                        cursor.step(bodySize);
+                        cursor.step(bodySize);
+                        e.preventDefault();
+                    }
+                    //up arrow
+                    else if (e.keyCode == 38) {
+                            cursor.stepUp(bodySize);
+                            e.preventDefault();
+                        }
+                        //down arrow
+                        else if (e.keyCode == 40) {
+                                cursor.stepDown(bodySize);
+                                e.preventDefault();
+                            }
+                            //right arrow
+                            else if (e.keyCode == 39) {
+                                    cursor.step(bodySize);
+                                    e.preventDefault();
+                                }
+                                //left arrow
+                                else if (e.keyCode == 37) {
+                                        cursor.stepBack(bodySize);
+                                        e.preventDefault();
+                                    }
     console.log("pressed " + e.key + " " + e.keyCode);
 }, false);
 

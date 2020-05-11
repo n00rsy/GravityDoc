@@ -3,12 +3,13 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Letter = function () {
-    function Letter(x, y, bodySize, c, font, fontSize, offsetX, offsetY) {
+    function Letter(x, y, bodySize, c, font, fontSize, offsetX, offsetY, exitForce, random) {
         _classCallCheck(this, Letter);
 
         this.body = Matter.Bodies.rectangle(x, y, bodySize, bodySize);
         Matter.World.add(world, this.body);
-        Matter.Body.setVelocity(this.body, { x: -1.5, y: 0 });
+
+        Matter.Body.setVelocity(this.body, { x: -exitForce + random, y: random });
 
         this.bodySize = bodySize;
         this.font = font;

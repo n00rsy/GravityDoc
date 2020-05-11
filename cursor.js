@@ -29,6 +29,7 @@ var Cursor = function () {
                     this.x = this.cursorBoundY;
                 }
             }
+            this.i = 0;
         }
     }, {
         key: "stepBack",
@@ -44,23 +45,33 @@ var Cursor = function () {
                     this.x = this.cursorBoundY;
                 }
             }
+            this.i = 0;
         }
     }, {
         key: "stepDown",
         value: function stepDown(bodySize) {
-            if (this.y + bodySize < height - cursorBoundY) {
-                this.y = this.y + bodySize;
+            if (this.y + bodySize + this.lineSpacing < height - cursorBoundY) {
+                this.y = this.y + bodySize + this.lineSpacing;
             }
+            this.i = 0;
+        }
+    }, {
+        key: "stepUp",
+        value: function stepUp(bodySize) {
+            if (this.y - bodySize - this.lineSpacing > this.cursorBoundY) {
+                this.y = this.y - bodySize - this.lineSpacing;
+            }
+            this.i = 0;
         }
     }, {
         key: "show",
         value: function show(bodySize) {
             if (this.i < 60) {
-                fill(255);
+                fill(0);
                 rectMode(CENTER);
-                rect(this.x, this.y, 0.5, bodySize + 2);
+                rect(this.x + bodySize / 2, this.y, 0.5, bodySize + 2);
             }
-            if (this.i == 80) {
+            if (this.i == 90) {
                 this.i = 0;
             }
 

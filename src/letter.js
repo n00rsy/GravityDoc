@@ -1,10 +1,11 @@
 
 class Letter{
-    constructor(x,y,bodySize,c,font,fontSize,offsetX,offsetY){
+    constructor(x,y,bodySize,c,font,fontSize,offsetX,offsetY,exitForce,random){
 
         this.body = Matter.Bodies.rectangle(x,y,bodySize,bodySize);
         Matter.World.add(world, this.body);
-        Matter.Body.setVelocity( this.body, {x: -1.5, y:0});
+        
+        Matter.Body.setVelocity( this.body, {x: -exitForce+random, y:random});
 
         this.bodySize = bodySize;
         this.font = font;
