@@ -18,30 +18,105 @@
 
     <script src="libraries/keypress-2.1.5.min.js"></script>
 
+    <script src="https://kit.fontawesome.com/5fc6b4bc93.js" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="styles.css">
 
     <title>Gravity Doc</title>
 </head>
 
 <body>
+    <div id="nameDocModalContainer"></div>
+    <div id="helpModalContainer"></div>
+    <div id="aboutModalContainer"></div>
 
     <div id="navbar">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row" style="margin-left: 30px;">
                 <div class="col-2" id="debug">
-                    <div class="row"id="debug">
-                    <h1>Document Title</h1>
+                    <div class="row" id="debug">
+                        <h1 id="docTitle" data-toggle="modal" data-target="#renameModal" style="cursor:pointer;">My
+                            Gravity Document</h1>
                     </div>
-                    <div class = "row"id="debug">
-                    <img src="src/img/documentIcon.png" id="docLogo">
-                    <div id="like_button_container"></div>
+                    <div class="row" id="debug">
+                        <img src="src/img/documentIcon.png" id="docLogo">
                     </div>
                 </div>
                 <div class="col-10" id="debug">
-                    One of three columns
+                    <div class="row" id="debug" style="border: medium solid#dfe2e6;">
+                        <div class="textButtonContainer">
+                            <button role="button" type="button" class="btn" data-toggle="dropdown">
+                                File
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#" style="cursor:pointer;" onClick="saveDoc()">Save</a>
+                                <a class="dropdown-item" data-toggle="modal" data-target="#renameModal"
+                                    style="cursor:pointer;">Rename</a>
+                                <a class="dropdown-item" onClick="reset()" style="cursor:pointer;">Reset</a>
+                            </div>
+                        </div>
+                        <div class="textButtonContainer">
+                            <button role="button" type="button" class="btn" data-toggle="dropdown">
+                                Options
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#">Save</a>
+                                <a class="dropdown-item" href="#">Rename</a>
+                                <a class="dropdown-item" href="#">Reset</a>
+                            </div>
+                        </div>
+                        <div class="textButtonContainer">
+                            <button role="button" type="button" class="btn" data-toggle="dropdown">
+                                Help
+                            </button>
+                        </div>
+                        <div class="textButtonContainer">
+                            <button role="button" type="button" class="btn" data-toggle="dropdown">
+                                About
+                            </button>
+                        </div>
+
+                    </div>
+                    <div class="row" id="settingsBarContainer">
+                        <div class="col-3" id="fontSettingsContainer">
+                            
+                                <div class="form-row" id="debug">
+                                    <div class="form-col">
+                                        <select class="form-control" id="fontSelect" style="width:auto" onchange = "changeFont()">
+                                            <option>Serif</option>
+                                            <option>Sans-serif</option>
+                                            <option>Monospace</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-col">
+                                        <select class="form-control" id="fontSizeSelect" onchange="changeFontSize()">
+                                            <option>12 pt</option>
+                                            <option>24 pt</option>
+                                            <option>72 pt</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        <div class="col" id="debug">
+                            <i class="fas fa-bold" id="iconButton"></i>
+                            <i class="fas fa-underline" id="iconButton"></i>
+                            <i class="fas fa-italic" id="iconButton" style="padding-right:5vw"></i>
+
+                            <i class="fas fa-align-left" id="iconButton" onClick="shiftGravity(0)"></i>
+                            <i class="fas fa-align-center" id="iconButton" onClick="shiftGravity(2)"></i>
+                            <i class="fas fa-align-right" id="iconButton" onClick="shiftGravity(1)" style="padding-right:5vw"></i>
+                            <div class="rangeContainer">
+                                <label for="gravityStrength">Gravity Strength </label>
+                                <input type="range" id="gravityStrength" onchange = "setGravityStrength()" min = "0" max = "100" step = 1" value = "20">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+    </div>
     </div>
 
     <div class="d-flex justify-content-center" id="docContainer"> </div>
@@ -50,13 +125,13 @@
     <script src="cursor.js"></script>
     <script src="boundary.js"></script>
     <script src="document.js"></script>
-    <script src = "topMenu.js"></script>
+    <script src="topMenu.js"></script>
 
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-  
+
     <!-- Load our React component. -->
-    <script src = "nameDocModal.js"></script>
+    <script src="nameDocModal.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"

@@ -3,19 +3,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Letter = function () {
-    function Letter(x, y, w, h, c) {
+    function Letter(x, y, bodySize, c, font, fontSize, offsetX, offsetY) {
         _classCallCheck(this, Letter);
 
-        this.body = Matter.Bodies.rectangle(x, y, w, h);
+        this.body = Matter.Bodies.rectangle(x, y, bodySize, bodySize);
         Matter.World.add(world, this.body);
         Matter.Body.setVelocity(this.body, { x: -1.5, y: 0 });
-        this.w = w;
-        this.h = h;
+
+        this.bodySize = bodySize;
+        this.font = font;
+        this.fontSize = fontSize;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
         this.c = c;
     }
 
     _createClass(Letter, [{
-        key: 'show',
+        key: "show",
         value: function show() {
             var pos = this.body.position;
             var angle = this.body.angle;
@@ -23,20 +27,20 @@ var Letter = function () {
             translate(pos.x, pos.y);
             rotate(angle);
             rectMode(CENTER);
-            //rect(0,0, this.w, this.h);
+            //rect(0,0, this.bodySize, this.bodySize);
             fill(0);
-            textSize(24);
-            textFont('serif');
-            text(this.c, -5, 10);
+            textSize(this.fontSize);
+            textFont(this.font);
+            text(this.c, this.offsetX, this.offsetY);
             pop();
         }
     }, {
-        key: 'remove',
+        key: "remove",
         value: function remove() {
             Matter.Composite.remove(world, this.body);
         }
     }, {
-        key: 'add',
+        key: "add",
         value: function add() {
             Matter.Composite.add(world, this.body);
         }

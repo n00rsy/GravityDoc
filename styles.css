@@ -9,7 +9,7 @@ html, body {
  }
 
  h1{
-     font-size: 20px;
+     font-size: 25px;
  }
  #docContainer{
     margin-top:30vh;
@@ -29,22 +29,48 @@ html, body {
     padding-bottom:10px;
     background-color: #ffffff;
     box-shadow: 0 0 5px 2px #bdbdbd;
-
   }
   
 #debug{
-    border: solid black 2px;
+    
 
 }
 #docLogo{
     height:50px;
     width: auto;
 }
+
+#settingsBarContainer{
+  padding-top:10px;
+  padding-left:10px;
+  position: relative;
+  height: 100%;
+}
+
+#fontSettingsContainer{
+
+}
+
+#buttonsContainer{
+  padding-top:10px;
+}
+
+
+#iconButton{
+  cursor:pointer;
+  font-size: 20px;
+  width: 35px;
+  transition: text-shadow  0.2s;
+  
+}
+#iconButton:hover{
+  text-shadow: 0 0 .5px lightblue, 0 0 2px lightblue, 0 0 2px lightblue;
+}
   /* Page content */
   .content {
     padding: 16px;
   }
-  
+
   /* The sticky class is added to the navbar with JS when it reaches its scroll position */
   .sticky {
     position: fixed;

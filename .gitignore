@@ -1,6 +1,6 @@
 node_modules
-boundary.js
-cursor.js
-document.js
-letter.js
-nameDocModal.js
+./boundary.js
+./cursor.js
+./document.js
+./letter.js
+./nameDocModal.js

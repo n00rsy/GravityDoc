@@ -1,12 +1,16 @@
 
 class Letter{
-    constructor(x,y,w,h,c){
+    constructor(x,y,bodySize,c,font,fontSize,offsetX,offsetY){
 
-        this.body = Matter.Bodies.rectangle(x,y,w,h);
+        this.body = Matter.Bodies.rectangle(x,y,bodySize,bodySize);
         Matter.World.add(world, this.body);
         Matter.Body.setVelocity( this.body, {x: -1.5, y:0});
-        this.w=w;
-        this.h=h;
+
+        this.bodySize = bodySize;
+        this.font = font;
+        this.fontSize = fontSize;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
         this.c = c;
     }
 
@@ -17,11 +21,11 @@ class Letter{
         translate(pos.x,pos.y);
         rotate(angle);
         rectMode(CENTER);
-        //rect(0,0, this.w, this.h);
+        //rect(0,0, this.bodySize, this.bodySize);
         fill(0);
-        textSize(24);
-        textFont('serif');
-        text(this.c, -5, 10);
+        textSize(this.fontSize);
+        textFont(this.font);
+        text(this.c, this.offsetX, this.offsetY);
         pop();
     }
     remove(){

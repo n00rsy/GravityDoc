@@ -11,17 +11,19 @@ var Cursor = function () {
         this.cursorBoundX = cursorBoundX;
         this.cursorBoundY = cursorBoundY;
         this.i = 0;
+        this.letterSpacing = 1;
+        this.lineSpacing = 4;
     }
 
     _createClass(Cursor, [{
         key: "step",
-        value: function step() {
-            if (this.x + 21 < width - cursorBoundX) {
-                this.x += 21;
+        value: function step(bodySize) {
+            if (this.x + bodySize + this.letterSpacing < width - cursorBoundX) {
+                this.x += bodySize + this.letterSpacing;
             } else {
-                if (this.y + 24 < height - this.cursorBoundY) {
+                if (this.y + bodySize + this.lineSpacing < height - this.cursorBoundY) {
                     this.x = this.cursorBoundX;
-                    this.y += 24;
+                    this.y += bodySize + this.lineSpacing;
                 } else {
                     this.y = this.cursorBoundX;
                     this.x = this.cursorBoundY;
@@ -30,13 +32,13 @@ var Cursor = function () {
         }
     }, {
         key: "stepBack",
-        value: function stepBack() {
-            if (this.x - 21 > cursorBoundX) {
-                this.x -= 21;
+        value: function stepBack(bodySize) {
+            if (this.x - bodySize - this.letterSpacing > cursorBoundX) {
+                this.x -= bodySize - this.letterSpacing;
             } else {
-                if (this.y - 24 > this.cursorBoundY) {
+                if (this.y - bodySize - this.lineSpacing > this.cursorBoundY) {
                     this.x = width - this.cursorBoundX;
-                    this.y -= 24;
+                    this.y -= bodySize - this.lineSpacing;
                 } else {
                     this.y = this.cursorBoundX;
                     this.x = this.cursorBoundY;
@@ -44,17 +46,31 @@ var Cursor = function () {
             }
         }
     }, {
+        key: "stepDown",
+        value: function stepDown(bodySize) {
+            if (this.y + bodySize < height - cursorBoundY) {
+                this.y = this.y + bodySize;
+            }
+        }
+    }, {
         key: "show",
-        value: function show() {
+        value: function show(bodySize) {
             if (this.i < 60) {
                 fill(255);
-                rect(this.x, this.y, 0.5, 20);
+                rectMode(CENTER);
+                rect(this.x, this.y, 0.5, bodySize + 2);
             }
             if (this.i == 80) {
                 this.i = 0;
             }
 
             this.i++;
+        }
+    }, {
+        key: "dontShow",
+        value: function dontShow() {
+            fill(0);
+            rect(this.x, this.y, 0.5, bodySize + 2);
         }
     }]);
 

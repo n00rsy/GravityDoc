@@ -11,13 +11,28 @@ var mouseConstraint = void 0;
 
 var canvas = void 0;
 
+var fps = void 0;
+var font = void 0,
+    fontSize = void 0,
+    bodySize = void 0;
+var textOffsetX = void 0,
+    textOffsetY = void 0;
+var gravityStrength = void 0;
 var cursorBoundX = void 0;
 var cursorBoundY = void 0;
 
 var listener = new window.keypress.Listener();
 
 function setup() {
-    frameRate(60);
+
+    fps = 60;
+    font = "monospace";
+    fontSize = 20;
+    bodySize = 15;
+    textOffsetX = -5;
+    textOffsetY = 8;
+
+    frameRate(fps);
     var canvasSize = 640;
     canvas = createCanvas(canvasSize, canvasSize * 11 / 8.5);
     canvas.parent('docContainer');
@@ -25,7 +40,7 @@ function setup() {
     engine = Matter.Engine.create();
     world = engine.world;
 
-    world.gravity.y = 0.1;
+    setGravityStrength();
 
     var marginSize = width * 0.125;
 
@@ -59,7 +74,7 @@ function undo() {
         letters[letters.length - 1].remove();
         deleted.push(letters.pop());
     }
-    cursor.stepBack();
+    cursor.stepBack(bodySize);
 }
 
 function redo() {
@@ -69,24 +84,108 @@ function redo() {
     }
 }
 
+function reset() {
+    console.log("resetting");
+    location.reload();
+}
+
+function saveDoc() {
+    save(document.getElementById("docTitle").textContent);
+}
+
+function shiftGravity(x) {
+    switch (x) {
+        //left
+        case 0:
+            world.gravity.x = -gravityStrength;
+            world.gravity.y = 0;
+            break;
+        //right
+        case 1:
+            world.gravity.x = gravityStrength;
+            world.gravity.y = 0;
+            break;
+        case 2:
+            if (world.gravity.y == 0) {
+                world.gravity.y = world.gravity.x;
+                world.gravity.x = 0;
+            } else {
+                world.gravity.y = -world.gravity.y;
+            }
+            break;
+        // code block
+    }
+}
+
+function changeFont() {
+    font = document.getElementById("fontSelect").value.toLowerCase();
+}
+
+function changeFontSize() {
+
+    var s = parseInt(document.getElementById("fontSizeSelect").value.slice(0, -3));
+    switch (s) {
+        case 12:
+            fontSize = 20;
+            bodySize = 15;
+            textOffsetX = -5;
+            textOffsetY = 8;
+            break;
+        case 24:
+            fontSize = 40;
+            bodySize = 25;
+            textOffsetX = -10;
+            textOffsetY = 10;
+            break;
+        case 72:
+            fontSize = 80;
+            bodySize = 50;
+            textOffsetX = -20;
+            textOffsetY = 20;
+            break;
+    }
+}
+
+function setGravityStrength() {
+    gravityStrength = document.getElementById("gravityStrength").value / 20;
+    console.log(gravityStrength);
+
+    if (world.gravity.x > 0) {
+        world.gravity.x = gravityStrength;
+    } else if (world.gravity.x < 0) {
+        world.gravity.x = -gravityStrength;
+    } else {
+        world.gravity.y = gravityStrength;
+    }
+}
+
 listener.simple_combo("ctrl z", function () {
     undo();
+});
+
+listener.simple_combo("ctrl s", function () {
+    cursor.dontShow();
+    saveDoc(document.getElementById("docTitle").textContent);
 });
 
 window.addEventListener("keydown", function (e) {
     if (e.keyCode >= 186 && e.keyCode <= 192 || e.keyCode >= 65 && e.keyCode <= 90 || e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 219 && e.keyCode <= 222) {
         var c = e.key;
-        cursor.step();
-        letters.push(new Letter(cursor.x, cursor.y, 20, 20, c));
+        cursor.step(bodySize);
+        letters.push(new Letter(cursor.x, cursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY));
     }
     //space
     if (e.keyCode == 32) {
-        cursor.step();
+        cursor.step(bodySize);
         e.preventDefault();
     }
     //backspace
     if (e.keyCode == 8) {
         undo();
+    }
+    //enter
+    if (e.keyCode == 13) {
+        cursor.stepDown(bodySize);
     }
     console.log("pressed " + e.key + " " + e.keyCode);
 }, false);
@@ -98,10 +197,11 @@ function draw() {
         return element.show();
     });
 
+    /*
     leftWall.show_debug();
     rightWall.show_debug();
     topWall.show_debug();
     bottomWall.show_debug();
-
-    cursor.show();
+    */
+    cursor.show(bodySize);
 }
