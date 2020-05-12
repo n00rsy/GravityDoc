@@ -1,6 +1,9 @@
 let letters = [];
-let deleted = [];
-let cursor;
+let deletedLetters = [];
+let typedCharacters = [];
+let deletedCharacters = [];
+
+let myCursor;
 let bottomWall, topWall, rightWall, leftWall;
 let world, engine;
 let mouseConstraint;
@@ -8,11 +11,10 @@ let mouseConstraint;
 let canvas;
 
 let fps;
-let font, fontSize,bodySize;
+let font, fontSize, fontStyle, underline, bodySize;
 let textOffsetX, textOffsetY;
-let gravityStrength, exitForce, random;
-let cursorBoundX;
-let cursorBoundY;
+let gravityStrength, exitForce, randomForce;
+let cursorBoundX, cursorBoundY;
 
 var listener = new window.keypress.Listener();
 
@@ -25,7 +27,7 @@ function setup() {
     fontSize = 20;
     bodySize = 15;
     textOffsetX = -5;
-    textOffsetY =8;
+    textOffsetY = 8;
 
     frameRate(fps);
     var canvasSize = 640;
@@ -36,8 +38,12 @@ function setup() {
     world = engine.world;
 
     setGravityStrength();
+    shiftGravity();
     setExitForce();
     setRandom();
+    setFontStyle();
+
+    addKeyListeners();
 
     var marginSize = width * 0.125;
 
@@ -49,7 +55,7 @@ function setup() {
     cursorBoundX = marginSize + 10;
     cursorBoundY = marginSize + 10;
 
-    cursor = new Cursor(cursorBoundX, cursorBoundY, cursorBoundX, cursorBoundY);
+    myCursor = new Cursor(cursorBoundX, cursorBoundY, cursorBoundX, cursorBoundY);
     //cursor.setup();
     var canvasmouse = Matter.Mouse.create(canvas.elt);
     canvasmouse.pixelRatio = pixelDensity();
@@ -61,75 +67,130 @@ function setup() {
     mouseConstraint = Matter.MouseConstraint.create(engine, options);
     Matter.World.add(world, mouseConstraint);
 
+
 }
 function mouseClicked(event) {
     if ((mouseX > cursorBoundX && mouseX < width - cursorBoundX) && (mouseY > cursorBoundY && mouseY < height - cursorBoundY)) {
-        cursor.x = mouseX;
-        cursor.y = mouseY;
+        //move cursor to location if inside page
+        myCursor.x = mouseX;
+        myCursor.y = mouseY;
+
+    }
+    else {
+        //dont show cursor
+
     }
 }
 
-function undo() {
-    if (letters.length > 0) {
-        letters[letters.length - 1].remove();
-        deleted.push(letters.pop());
+function undo(moveCursor) {
+    var c = typedCharacters.pop();
+    if (c != null) {
+        deletedCharacters.push(c);
+        if (moveCursor) {
+            if (c == "\n") {
+                myCursor.stepUp(bodySize);
+            }
+            else if (c == "\t") {
+                myCursor.stepBack(bodySize);
+                myCursor.stepBack(bodySize);
+                myCursor.stepBack(bodySize);
+                myCursor.stepBack(bodySize);
+            }
+
+            else {
+                myCursor.stepBack(bodySize);
+            }
+        }
+        if (c != "\t" && c != "\n" && c != " " && letters.length > 0) {
+            letters[letters.length - 1].remove();
+            deletedLetters.push(letters.pop());
+        }
     }
 }
 
-function redo(){
-    if(deleted.length>0){
-        deleted[deleted.length-1].add();
-        letters.push(deleted.pop());
+function redo(moveCursor) {
+    var c = deletedCharacters.pop();
+    if (c != null) {
+        typedCharacters.push(c);
+        if (moveCursor) {
+            if (c == "\n") {
+                myCursor.stepDown(bodySize);
+            }
+
+            else if (c == "\t") {
+                myCursor.step(bodySize);
+                myCursor.step(bodySize);
+                myCursor.step(bodySize);
+                myCursor.step(bodySize);
+            }
+            else {
+                myCursor.step(bodySize);
+            }
+        }
+        if (c != "\t" && c != "\n" && c != " " && deletedLetters.length > 0) {
+            deletedLetters[deletedLetters.length - 1].add();
+            letters.push(deletedLetters.pop());
+        }
     }
 }
 
-function reset(){
+function reset() {
     console.log("resetting");
     location.reload();
 }
 
-function saveDoc(){
+function saveDoc() {
     save(document.getElementById("docTitle").textContent);
 }
 
-function shiftGravity(x){
-    switch(x) {
+function shiftGravity() {
+
+    var e = document.getElementsByName('gravity');
+    var i;
+    for (i = 0; i < e.length; i++) {
+        if (e[i].checked) {
+            break;
+        }
+    }
+    e[i].blur();
+    switch (i) {
         //left
         case 0:
             world.gravity.x = -gravityStrength;
             world.gravity.y = 0;
-        break;
-          //right
-        case 1:
+            break;
+        //right
+        case 2:
             world.gravity.x = gravityStrength;
             world.gravity.y = 0;
-        break;
+            break;
         //up/down
-        case 2:
-            if(world.gravity.y==0){
-                world.gravity.y=world.gravity.x;
-                world.gravity.x=0;
+        case 1:
+            if (world.gravity.y == 0) {
+                world.gravity.y = world.gravity.x;
+                world.gravity.x = 0;
             }
-            else{
-                world.gravity.y=-world.gravity.y;
+            else {
+                world.gravity.y = -world.gravity.y;
             }
-        break;
-      }
+            break;
+    }
+    canvas.elt.focus();
 }
 
-function changeFont(){
+function changeFont() {
     font = document.getElementById("fontSelect").value.toLowerCase();
 }
 
-function changeFontSize(){
+function changeFontSize() {
 
     var s = parseInt(document.getElementById("fontSizeSelect").value.slice(0, -3));
-    switch(s){
+    switch (s) {
         case 12:
             fontSize = 20;
             bodySize = 15;
             textOffsetX = -5;
-            textOffsetY =8;
+            textOffsetY = 8;
             break;
         case 24:
             fontSize = 40;
@@ -146,104 +207,161 @@ function changeFontSize(){
     }
 }
 
-function setGravityStrength(){
-    gravityStrength = document.getElementById("gravityStrength").value/20;
+
+function setFontStyle() {
+    console.log("setting font style");
+    var e = document.getElementsByName('fontStyle');
+    var style = "";
+    //bold
+    if (e[0].checked) {
+        style += "b";
+    }
+    //italics
+    if (e[1].checked) {
+        style += "i";
+    }
+
+    switch (style) {
+        case "b":
+            fontStyle = BOLD;
+            break;
+        case "i":
+            fontStyle = ITALIC;
+            break;
+        case "":
+            fontStyle = NORMAL;
+            break;
+        case "bi": //lol
+            fontStyle = BOLDITALIC;
+            break;
+    }
+    underline = e[2].checked;
+}
+
+function setGravityStrength() {
+    gravityStrength = document.getElementById("gravityStrength").value / 20;
     console.log(gravityStrength);
 
-    if(world.gravity.x>0){
-        world.gravity.x=gravityStrength;
+    if (world.gravity.x > 0) {
+        world.gravity.x = gravityStrength;
     }
-    else if(world.gravity.x<0){
-        world.gravity.x=-gravityStrength;
+    else if (world.gravity.x < 0) {
+        world.gravity.x = -gravityStrength;
     }
-    else if(world.gravity.y>=0){
-        world.gravity.y=gravityStrength;
+    else if (world.gravity.y > 0) {
+        world.gravity.y = gravityStrength;
     }
-    else if(world.gravity.y<0){
-        world.gravity.y=-gravityStrength;
+    else if (world.gravity.y <= 0) {
+        world.gravity.y = -gravityStrength;
     }
 }
 
-function setExitForce(){
-    exitForce = document.getElementById("exitForce").value/5;
+function setExitForce() {
+    exitForce = document.getElementById("exitForce").value / 5;
 }
-function setRandom(){
-    random = document.getElementById("random").value/14;
+function setRandom() {
+    randomForce = document.getElementById("random").value / 16;
 }
-
-listener.simple_combo("ctrl z", function() {
-    undo();
-});
-
-listener.simple_combo("ctrl s", function() {
-    cursor.dontShow();
-    saveDoc(document.getElementById("docTitle").textContent);
-});
-
-listener.simple_combo("ctrl n", function(){
-    newDoc();
-});
 
 function newDoc() {
     window.open(window.location.href, '_blank');
 }
 
+function test() {
+    console.log("testing");
+}
 
-window.addEventListener("keydown",
-    function (e) {
-        if ((e.keyCode >= 186 && e.keyCode <= 192) || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 219 && e.keyCode <= 222)) {
-            var c = e.key;
-            cursor.step(bodySize);
-            var r = Math.random()*random-random/2;
-            letters.push(new Letter(cursor.x, cursor.y, bodySize, c, font,fontSize, textOffsetX,textOffsetY, exitForce,r));
-        }
-        //space
-        else if (e.keyCode == 32) {
-            cursor.step(bodySize);
-            e.preventDefault();
-        }
-        //backspace
-        else if (e.keyCode == 8) {
-            undo();
-            cursor.stepBack(bodySize);
-        }
-        //enter
-        else if (e.keyCode == 13) {
-            cursor.stepDown(bodySize);
-        }
-        //tab
-        else if(e.keyCode == 9){
-            cursor.step(bodySize);
-            cursor.step(bodySize);
-            cursor.step(bodySize);
-            cursor.step(bodySize);
-            e.preventDefault();
-        }
-        //up arrow
-        else if(e.keyCode == 38){
-            cursor.stepUp(bodySize);
-            e.preventDefault();
-        }
-        //down arrow
-        else if(e.keyCode == 40){
-            cursor.stepDown(bodySize);
-            e.preventDefault();
-        }
-        //right arrow
-        else if (e.keyCode == 39){
-            cursor.step(bodySize);
-            e.preventDefault();
-        }
-        //left arrow
-        else if(e.keyCode == 37){
-            cursor.stepBack(bodySize);
-            e.preventDefault();
-        }
-        console.log("pressed " + e.key + " " + e.keyCode);
 
-    },
-    false);
+function handleKeyDown(e) {
+    if ((e.keyCode >= 186 && e.keyCode <= 192) || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 219 && e.keyCode <= 222)) {
+        var c = e.key;
+        myCursor.step(bodySize);
+        var r = Math.random() * randomForce - randomForce / 2;
+        letters.push(new Letter(myCursor.x, myCursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline));
+        typedCharacters.push(e.key);
+    }
+    //space
+    else if (e.keyCode == 32) {
+        myCursor.step(bodySize);
+        e.preventDefault();
+        typedCharacters.push(e.key);
+    }
+    //backspace
+    else if (e.keyCode == 8) {
+        undo(true);
 
+    }
+    //enter
+    else if (e.keyCode == 13) {
+        myCursor.stepDown(bodySize);
+        typedCharacters.push("\n");
+    }
+    //tab
+    else if (e.keyCode == 9) {
+        myCursor.step(bodySize);
+        myCursor.step(bodySize);
+        myCursor.step(bodySize);
+        myCursor.step(bodySize);
+        e.preventDefault();
+        typedCharacters.push("\t");
+    }
+    //up arrow
+    else if (e.keyCode == 38) {
+        myCursor.stepUp(bodySize);
+        e.preventDefault();
+    }
+    //down arrow
+    else if (e.keyCode == 40) {
+        myCursor.stepDown(bodySize);
+        e.preventDefault();
+    }
+    //right arrow
+    else if (e.keyCode == 39) {
+        myCursor.step(bodySize);
+        e.preventDefault();
+    }
+    //left arrow
+    else if (e.keyCode == 37) {
+        myCursor.stepBack(bodySize);
+        e.preventDefault();
+    }
+    //console.log("pressed " + e.key + " " + e.keyCode);
+    console.log(typedCharacters.join(""));
+}
+
+function addKeyListeners() {
+    console.log("adding keypress listener");
+    window.addEventListener("keydown", handleKeyDown, false);
+
+    listener.simple_combo("ctrl z", function () {
+        undo(true);
+    });
+    listener.simple_combo("ctrl shift z", function () {
+        console.log("yeee");
+        redo(true);
+    });
+
+    listener.simple_combo("ctrl s", function () {
+        myCursor.dontShow();
+        saveDoc(document.getElementById("docTitle").textContent);
+    });
+
+    listener.simple_combo("ctrl n", function () {
+        newDoc();
+    });
+
+    listener.sequence_combo("up up down down left right left right b a enter", function() {
+        console.log("achieved beastmode");
+    }, true);
+
+}
+
+
+
+function removeKeyListeners() {
+    console.log("removing keypress listener");
+    window.removeEventListener("keydown", handleKeyDown, false);
+}
 function draw() {
     background(255);
     Matter.Engine.update(engine);
@@ -255,6 +373,5 @@ function draw() {
     topWall.show_debug();
     bottomWall.show_debug();
 */
-    cursor.show(bodySize);
-
+    myCursor.show(bodySize);
 }

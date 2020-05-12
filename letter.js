@@ -3,19 +3,29 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Letter = function () {
-    function Letter(x, y, bodySize, c, font, fontSize, offsetX, offsetY, exitForce, random) {
+    function Letter(x, y, bodySize, c, font, fontSize, offsetX, offsetY, exitForce, randomForce, fontStyle, underline) {
         _classCallCheck(this, Letter);
 
         this.body = Matter.Bodies.rectangle(x, y, bodySize, bodySize);
         Matter.World.add(world, this.body);
 
-        Matter.Body.setVelocity(this.body, { x: -exitForce + random, y: random });
+        Matter.Body.setVelocity(this.body, { x: -exitForce + randomForce, y: randomForce });
+        Matter.Body.setAngularVelocity(this.body, randomForce / 13);
 
         this.bodySize = bodySize;
         this.font = font;
         this.fontSize = fontSize;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.fontStyle = fontStyle;
+
+        if (underline) {
+            this.underlinePos = this.bodySize / 2 + 2;
+            this.underlineSize = underline ? bodySize * 0.04 : 0;
+            this.drawLetter = this.drawWithUnderline;
+        } else {
+            this.drawLetter = this.drawWithoutUnderline;
+        }
         this.c = c;
     }
 
@@ -27,13 +37,28 @@ var Letter = function () {
             push();
             translate(pos.x, pos.y);
             rotate(angle);
+            this.drawLetter();
+            pop();
+        }
+    }, {
+        key: "drawWithUnderline",
+        value: function drawWithUnderline() {
             rectMode(CENTER);
-            //rect(0,0, this.bodySize, this.bodySize);
+            rect(0, this.underlinePos, this.bodySize, this.underlineSize);
             fill(0);
             textSize(this.fontSize);
+            textStyle(this.fontStyle);
             textFont(this.font);
             text(this.c, this.offsetX, this.offsetY);
-            pop();
+        }
+    }, {
+        key: "drawWithoutUnderline",
+        value: function drawWithoutUnderline() {
+            fill(0);
+            textSize(this.fontSize);
+            textStyle(this.fontStyle);
+            textFont(this.font);
+            text(this.c, this.offsetX, this.offsetY);
         }
     }, {
         key: "remove",

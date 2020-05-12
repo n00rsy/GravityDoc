@@ -11,17 +11,18 @@ var Cursor = function () {
         this.cursorBoundX = cursorBoundX;
         this.cursorBoundY = cursorBoundY;
         this.i = 0;
-        this.letterSpacing = 1;
-        this.lineSpacing = 4;
+        this.letterSpacing = 0;
+        this.lineSpacing = 1;
+        this.showFunction = this.doShow;
     }
 
     _createClass(Cursor, [{
         key: "step",
         value: function step(bodySize) {
-            if (this.x + bodySize + this.letterSpacing < width - cursorBoundX) {
+            if (this.x + bodySize + this.letterSpacing <= width - cursorBoundX) {
                 this.x += bodySize + this.letterSpacing;
             } else {
-                if (this.y + bodySize + this.lineSpacing < height - this.cursorBoundY) {
+                if (this.y + bodySize + this.lineSpacing <= height - this.cursorBoundY) {
                     this.x = this.cursorBoundX;
                     this.y += bodySize + this.lineSpacing;
                 } else {
@@ -34,10 +35,10 @@ var Cursor = function () {
     }, {
         key: "stepBack",
         value: function stepBack(bodySize) {
-            if (this.x - bodySize - this.letterSpacing > cursorBoundX) {
+            if (this.x - bodySize - this.letterSpacing >= cursorBoundX) {
                 this.x -= bodySize - this.letterSpacing;
             } else {
-                if (this.y - bodySize - this.lineSpacing > this.cursorBoundY) {
+                if (this.y - bodySize - this.lineSpacing >= this.cursorBoundY) {
                     this.x = width - this.cursorBoundX;
                     this.y -= bodySize - this.lineSpacing;
                 } else {
@@ -50,7 +51,7 @@ var Cursor = function () {
     }, {
         key: "stepDown",
         value: function stepDown(bodySize) {
-            if (this.y + bodySize + this.lineSpacing < height - cursorBoundY) {
+            if (this.y + bodySize + this.lineSpacing <= height - cursorBoundY) {
                 this.y = this.y + bodySize + this.lineSpacing;
             }
             this.i = 0;
@@ -58,7 +59,7 @@ var Cursor = function () {
     }, {
         key: "stepUp",
         value: function stepUp(bodySize) {
-            if (this.y - bodySize - this.lineSpacing > this.cursorBoundY) {
+            if (this.y - bodySize - this.lineSpacing >= this.cursorBoundY) {
                 this.y = this.y - bodySize - this.lineSpacing;
             }
             this.i = 0;
@@ -66,6 +67,11 @@ var Cursor = function () {
     }, {
         key: "show",
         value: function show(bodySize) {
+            this.showFunction(bodySize);
+        }
+    }, {
+        key: "doShow",
+        value: function doShow(bodySize) {
             if (this.i < 60) {
                 fill(0);
                 rectMode(CENTER);
@@ -79,10 +85,7 @@ var Cursor = function () {
         }
     }, {
         key: "dontShow",
-        value: function dontShow() {
-            fill(0);
-            rect(this.x, this.y, 0.5, bodySize + 2);
-        }
+        value: function dontShow() {}
     }]);
 
     return Cursor;

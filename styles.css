@@ -40,6 +40,14 @@ html, body {
     width: auto;
 }
 
+
+
+#docTitle{
+  cursor:pointer; 
+  hyphens: auto;
+  font-size: x-large;
+}
+
 #settingsBarContainer{
 
   height: 100%;
@@ -52,18 +60,59 @@ html, body {
 #buttonsContainer{
   padding-top:10px;
 }
+.btn-secondary{
+  background-color: white;
+  border-radius: 0;
+  color:black;
+  border:none;
+}
 
+.btn-secondary:hover{
+  background-color: #bdbdbd;
+}
 
 #iconButton{
   cursor:pointer;
   font-size: 20px;
-  width: 35px;
-  transition: text-shadow  0.2s;
+  width:20px;
   
+  transition: text-shadow  0.2s;
 }
-#iconButton:hover{
-  text-shadow: 0 0 .5px lightblue, 0 0 2px lightblue, 0 0 2px lightblue;
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height:5px;
+  background: #bdbdbd; /* Grey background */
+  outline: none; /* Remove outline */
+
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: background .2s;
+  margin-top:8px;
+  margin-bottom: 15px;
+  min-width: 100px;
+  max-width: 150px;
 }
+
+.slider:hover {
+  background: #a3a3a3; /* Fully shown on mouse-over */
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 10px; /* Set a specific slider handle width */
+  height: 20px; /* Slider handle height */
+  background: #545B62; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 10px; /* Set a specific slider handle width */
+  height: 20px; /* Slider handle height */
+  background: #545B62; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
   /* Page content */
   .content {
     padding: 16px;

@@ -5,17 +5,17 @@ class Cursor{
         this.cursorBoundX = cursorBoundX;
         this.cursorBoundY=cursorBoundY;
         this.i=0;
-        this.letterSpacing = 1;
-        this.lineSpacing = 4;
-        
+        this.letterSpacing = 0;
+        this.lineSpacing = 1;
+        this.showFunction = this.doShow;
     }
 
     step(bodySize){
-        if(this.x+bodySize+this.letterSpacing<width-cursorBoundX){
+        if(this.x+bodySize+this.letterSpacing<=width-cursorBoundX){
             this.x+=bodySize+this.letterSpacing;
         }
         else{
-            if(this.y+bodySize+this.lineSpacing<height-this.cursorBoundY){
+            if(this.y+bodySize+this.lineSpacing<=height-this.cursorBoundY){
             this.x = this.cursorBoundX;
             this.y+=bodySize+this.lineSpacing;
             }
@@ -28,11 +28,11 @@ class Cursor{
         
     }
     stepBack(bodySize){
-        if(this.x-bodySize-this.letterSpacing>cursorBoundX){
+        if(this.x-bodySize-this.letterSpacing>=cursorBoundX){
             this.x-=bodySize-this.letterSpacing;
         }
         else{
-            if(this.y-bodySize-this.lineSpacing>this.cursorBoundY){
+            if(this.y-bodySize-this.lineSpacing>=this.cursorBoundY){
             this.x = width-this.cursorBoundX;
             this.y-=bodySize-this.lineSpacing;
             }
@@ -46,20 +46,24 @@ class Cursor{
     }
 
     stepDown(bodySize){
-        if(this.y+bodySize+this.lineSpacing<height-cursorBoundY){
+        if(this.y+bodySize+this.lineSpacing<=height-cursorBoundY){
             this.y=this.y+bodySize+this.lineSpacing;
         }
         this.i=0;
     }
 
     stepUp(bodySize){
-        if(this.y-bodySize-this.lineSpacing>this.cursorBoundY){
+        if(this.y-bodySize-this.lineSpacing>=this.cursorBoundY){
             this.y=this.y-bodySize-this.lineSpacing;
         }
         this.i=0;
     }
     
     show(bodySize){
+        this.showFunction(bodySize);
+    }
+
+    doShow(bodySize){
         if(this.i<60){
             fill(0);
             rectMode(CENTER);
@@ -72,7 +76,6 @@ class Cursor{
         this.i++;
     }
     dontShow(){
-        fill(0);
-            rect(this.x,this.y, 0.5, bodySize+2);
+
     }
 }

@@ -11,10 +11,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.js"></script>
 
-    <script src="https://unpkg.com/matter-js@0.14.2/build/matter.min.js"></script>
+    <script src="https://unpkg.com/matter-js@0.14.2/build/matter.js"></script>
 
     <script src="libraries/keypress-2.1.5.min.js"></script>
 
@@ -32,14 +32,27 @@
 
     <div id="navbar">
         <div class="container-fluid">
-            <div class="row" style="margin-left: 30px;">
+            <div class="row " style="margin-left: 1px">
                 <div class="col-2" id="debug">
+                    
+                        <h1 id="docTitle" data-toggle="modal" data-target="#renameModal">My Gravity Document</h1>
+                        <div id="leftMenuContainer">
+                        
+                            <div class="btn-group">
+                                <label class="btn btn-secondary">
+                                    <i class="fas fa-undo-alt" id="iconButton"></i>
+                                    <input type="button" onClick="undo(true)" style="display: none">
+                                </label>
+
+                                <label class="btn btn-secondary">
+                                    <i class="fas fa-redo-alt" id="iconButton"></i>
+                                    <input type="button" onClick="redo(true)" style="display: none">
+                                </label>
+                            </div>
+                        </div>
+                    
                     <div class="row" id="debug">
-                        <h1 id="docTitle" data-toggle="modal" data-target="#renameModal" style="cursor:pointer;">My
-                            Gravity Document</h1>
-                    </div>
-                    <div class="row" id="debug">
-                        <img src="src/img/documentIcon.png" id="docLogo">
+
                     </div>
                 </div>
                 <div class="col-10" id="debug">
@@ -78,62 +91,95 @@
                         </div>
 
                     </div>
-                    <div class="row" id="debug">
-                        <div class="col-md-3 col-sm-12 " id="debug">
-
-                            <div class="form-row" id="debug">
-                                <div class="form-col">
-                                    <select class="form-control" id="fontSelect" style="width:auto"
-                                        onchange="changeFont()">
-                                        <option>Serif</option>
-                                        <option>Sans-serif</option>
-                                        <option>Monospace</option>
-                                    </select>
+                    <div class="row" id="debug" style="padding-top:15px">
+                        <div class="col" id="debug" style="display: flex; height: 100%;">
+                            <div class="textOptionsContainer1"
+                                style="height: 100%; width: fit-content;padding-right: 2vw;">
+                                <div class="form-row" id="debug">
+                                    <div class="form-col">
+                                        <select class="form-control" id="fontSelect" style="width:auto"
+                                            onchange="changeFont()">
+                                            <option>Serif</option>
+                                            <option>Sans-serif</option>
+                                            <option>Monospace</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-col">
+                                        <select class="form-control" id="fontSizeSelect" onchange="changeFontSize()">
+                                            <option>12 pt</option>
+                                            <option>24 pt</option>
+                                            <option>72 pt</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-col">
-                                    <select class="form-control" id="fontSizeSelect" onchange="changeFontSize()">
-                                        <option>12 pt</option>
-                                        <option>24 pt</option>
-                                        <option>72 pt</option>
-                                    </select>
+                            </div>
+                            <div class="debug" style="height: 100%; flex: 1;display: flex;">
+                                <div style="height: 100%; flex: 1; min-width: 100px;">
+
+                                    <div class="btn-group">
+                                        <div class="btn-group" data-toggle="buttons">
+                                            <label class="btn btn-secondary">
+                                                <i class="fas fa-bold" id="iconButton"></i>
+                                                <input type="checkbox" name="fontStyle" id="bold"
+                                                    onClick="setFontStyle()" style="display: none">
+
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <i class="fas fa-italic" id="iconButton"></i>
+                                                <input type="checkbox" name="fontStyle" id="italics"
+                                                    onClick="setFontStyle()" style="display: none">
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <i class="fas fa-underline" id="iconButton"></i>
+                                                <input type="checkbox" name="fontStyle" id="underline"
+                                                    onClick="setFontStyle()" style="display: none">
+                                            </label>
+                                        </div>
+
+                                        <div class="btn-group" data-toggle="buttons" id="gravityDirections">
+                                            <label class="btn btn-secondary">
+                                                <i class="fas fa-align-left" id="iconButton"></i>
+                                                <input type="radio" name="gravity" id="left" autocomplete="off"
+                                                    onClick="shiftGravity()" style="display: none">
+
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <i class="fas fa-align-center" id="iconButton"></i>
+                                                <input type="radio" name="gravity" id="center" autocomplete="off"
+                                                    onClick="shiftGravity()" checked style="display: none">
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <i class="fas fa-align-right" id="iconButton"></i>
+                                                <input type="radio" name="gravity" id="right" autocomplete="off"
+                                                    onClick="shiftGravity()" style="display: none">
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                        </div>
-                        <div class="col-md-3 col-sm-12" id="debug">
-                            <div class="row" id="debug">
-                                <div class="col">
-                                    <i class="fas fa-bold" id="iconButton"></i>
-                                    <i class="fas fa-underline" id="iconButton"></i>
-                                    <i class="fas fa-italic" id="iconButton"></i>
-                                </div>
-                                <div class="col" id="debug">
-                                    <i class="fas fa-align-left" id="iconButton" onClick="shiftGravity(0)"></i>
-                                    <i class="fas fa-align-center" id="iconButton" onClick="shiftGravity(2)"></i>
-                                    <i class="fas fa-align-right" id="iconButton" onClick="shiftGravity(1)"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col" id="debug">
-                            <div class="row">
-                                <div class="col">
-                                    <input type="range" id="gravityStrength" onchange="setGravityStrength()" min="0"
-                                        max="100" step=1" value="20">
-                                    <label for="gravityStrength"
-                                        style="display: table-cell; vertical-align: middle;">Gravity Strength </label>
-                                </div>
-                                <div class="col">
-                                    <input type="range" id="exitForce" onchange="setExitForce()" min="0" max="100"
-                                        step=1" value="15">
-                                    <label for="exitForce"
-                                        style="display: table-cell; vertical-align: middle; text-align: center;">Exit
-                                        Force</label>
-                                </div>
-                                <div class="col">
-                                    <input type="range" id="random" onchange="setRandom()" min="0" max="100" step=1"
-                                        value="0">
-                                    <label for="random"
-                                        style="display: table-cell; vertical-align: middle;">Random</label>
+                            <div class="col" id="debug">
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="range" class="slider" id="gravityStrength"
+                                            onchange="setGravityStrength()" min="0" max="100" step=1" value="20">
+                                        <label for="gravityStrength"
+                                            style="display: table-cell; vertical-align: middle;">Gravity Strength
+                                        </label>
+                                    </div>
+                                    <div class="col">
+                                        <input type="range" class="slider" id="exitForce" onchange="setExitForce()"
+                                            min="0" max="100" step=1" value="15">
+                                        <label for="exitForce"
+                                            style="display: table-cell; vertical-align: middle; text-align: center;">Exit
+                                            Force</label>
+                                    </div>
+                                    <div class="col">
+                                        <input type="range" class="slider" id="random" onchange="setRandom()" min="0"
+                                            max="100" step=1" value="0">
+                                        <label for="random"
+                                            style="display: table-cell; vertical-align: middle;">Random</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +187,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
     </div>
 
