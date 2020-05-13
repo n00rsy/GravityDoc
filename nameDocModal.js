@@ -31,7 +31,12 @@ var NameDocModal = function (_React$Component) {
     }, {
         key: 'handleSubmit',
         value: function handleSubmit(event) {
-            document.getElementById("docTitle").textContent = this.state.value;
+
+            if (this.state.value.length > 30 || this.state.value.length == 0) {
+                setDocumentTitle("Untitled Document");
+            } else {
+                setDocumentTitle(this.state.value);
+            }
             event.preventDefault();
         }
     }, {

@@ -15,18 +15,17 @@ class NameDocModal extends React.Component {
     }
 
     handleSubmit(event) {
-        removeKeyListeners();
-        var newTitle;
-        if(this.state.value.length==0){
-            newTitle = "Untitled Document";
+ 
+    
+        if(this.state.value.length>30 || this.state.value.length==0){
+           setDocumentTitle("Untitled Document");
         }
-        else if(this.state.value.length>){
-        document.getElementById("docTitle").textContent = this.state.value;
+        else{
+        setDocumentTitle(this.state.value);
         }
         event.preventDefault();
         
 
-        addKeyListeners();
     }
 
     render() {

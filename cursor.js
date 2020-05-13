@@ -18,49 +18,57 @@ var Cursor = function () {
 
     _createClass(Cursor, [{
         key: "step",
-        value: function step(bodySize) {
-            if (this.x + bodySize + this.letterSpacing <= width - cursorBoundX) {
-                this.x += bodySize + this.letterSpacing;
-            } else {
-                if (this.y + bodySize + this.lineSpacing <= height - this.cursorBoundY) {
-                    this.x = this.cursorBoundX;
-                    this.y += bodySize + this.lineSpacing;
+        value: function step(bodySize, moveCursor) {
+            if (moveCursor) {
+                if (this.x + bodySize + this.letterSpacing <= width - cursorBoundX) {
+                    this.x += bodySize + this.letterSpacing;
                 } else {
-                    this.y = this.cursorBoundX;
-                    this.x = this.cursorBoundY;
+                    if (this.y + bodySize + this.lineSpacing <= height - this.cursorBoundY) {
+                        this.x = this.cursorBoundX;
+                        this.y += bodySize + this.lineSpacing;
+                    } else {
+                        this.y = this.cursorBoundX;
+                        this.x = this.cursorBoundY;
+                    }
                 }
             }
             this.i = 0;
         }
     }, {
         key: "stepBack",
-        value: function stepBack(bodySize) {
-            if (this.x - bodySize - this.letterSpacing >= cursorBoundX) {
-                this.x -= bodySize - this.letterSpacing;
-            } else {
-                if (this.y - bodySize - this.lineSpacing >= this.cursorBoundY) {
-                    this.x = width - this.cursorBoundX;
-                    this.y -= bodySize - this.lineSpacing;
+        value: function stepBack(bodySize, moveCursor) {
+            if (moveCursor) {
+                if (this.x - bodySize - this.letterSpacing >= cursorBoundX) {
+                    this.x -= bodySize - this.letterSpacing;
                 } else {
-                    this.y = this.cursorBoundX;
-                    this.x = this.cursorBoundY;
+                    if (this.y - bodySize - this.lineSpacing >= this.cursorBoundY) {
+                        this.x = width - this.cursorBoundX;
+                        this.y -= bodySize - this.lineSpacing;
+                    } else {
+                        this.y = this.cursorBoundX;
+                        this.x = this.cursorBoundY;
+                    }
                 }
             }
             this.i = 0;
         }
     }, {
         key: "stepDown",
-        value: function stepDown(bodySize) {
-            if (this.y + bodySize + this.lineSpacing <= height - cursorBoundY) {
-                this.y = this.y + bodySize + this.lineSpacing;
+        value: function stepDown(bodySize, moveCursor) {
+            if (moveCursor) {
+                if (this.y + bodySize + this.lineSpacing <= height - cursorBoundY) {
+                    this.y = this.y + bodySize + this.lineSpacing;
+                }
             }
             this.i = 0;
         }
     }, {
         key: "stepUp",
-        value: function stepUp(bodySize) {
-            if (this.y - bodySize - this.lineSpacing >= this.cursorBoundY) {
-                this.y = this.y - bodySize - this.lineSpacing;
+        value: function stepUp(bodySize, moveCursor) {
+            if (moveCursor) {
+                if (this.y - bodySize - this.lineSpacing >= this.cursorBoundY) {
+                    this.y = this.y - bodySize - this.lineSpacing;
+                }
             }
             this.i = 0;
         }

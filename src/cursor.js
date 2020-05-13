@@ -10,7 +10,8 @@ class Cursor{
         this.showFunction = this.doShow;
     }
 
-    step(bodySize){
+    step(bodySize,moveCursor){
+        if(moveCursor){
         if(this.x+bodySize+this.letterSpacing<=width-cursorBoundX){
             this.x+=bodySize+this.letterSpacing;
         }
@@ -24,10 +25,12 @@ class Cursor{
                 this.x = this.cursorBoundY;
             }
         }
+    }
         this.i=0;
         
     }
-    stepBack(bodySize){
+    stepBack(bodySize,moveCursor){
+        if(moveCursor){
         if(this.x-bodySize-this.letterSpacing>=cursorBoundX){
             this.x-=bodySize-this.letterSpacing;
         }
@@ -41,21 +44,26 @@ class Cursor{
                 this.x = this.cursorBoundY;
             }
         }
+    }
         this.i=0;
         
     }
 
-    stepDown(bodySize){
+    stepDown(bodySize,moveCursor){
+        if(moveCursor){
         if(this.y+bodySize+this.lineSpacing<=height-cursorBoundY){
             this.y=this.y+bodySize+this.lineSpacing;
         }
+    }
         this.i=0;
     }
 
-    stepUp(bodySize){
+    stepUp(bodySize,moveCursor){
+        if(moveCursor){
         if(this.y-bodySize-this.lineSpacing>=this.cursorBoundY){
             this.y=this.y-bodySize-this.lineSpacing;
         }
+    }
         this.i=0;
     }
     

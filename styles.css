@@ -10,6 +10,7 @@ html, body {
 
  h1{
      font-size: 25px;
+     word-wrap: break-word;
  }
  #docContainer{
     margin-top:30vh;
@@ -44,13 +45,12 @@ html, body {
 
 #docTitle{
   cursor:pointer; 
-  hyphens: auto;
   font-size: x-large;
+  text-overflow: ellipsis;
 }
 
 #settingsBarContainer{
 
-  height: 100%;
 }
 
 #fontSettingsContainer{
@@ -68,14 +68,14 @@ html, body {
 }
 
 .btn-secondary:hover{
-  background-color: #bdbdbd;
+  background-color: #797979;
 }
 
 #iconButton{
   cursor:pointer;
   font-size: 20px;
   width:20px;
-  
+  padding-top:5px;
   transition: text-shadow  0.2s;
 }
 .slider {
@@ -96,6 +96,9 @@ html, body {
 
 .slider:hover {
   background: #a3a3a3; /* Fully shown on mouse-over */
+}
+.slider:active{
+  
 }
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */

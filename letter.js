@@ -3,7 +3,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Letter = function () {
-    function Letter(x, y, bodySize, c, font, fontSize, offsetX, offsetY, exitForce, randomForce, fontStyle, underline) {
+    function Letter(x, y, bodySize, c, font, fontSize, offsetX, offsetY, exitForce, randomForce, fontStyle, underline, textColor) {
         _classCallCheck(this, Letter);
 
         this.body = Matter.Bodies.rectangle(x, y, bodySize, bodySize);
@@ -18,6 +18,7 @@ var Letter = function () {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.fontStyle = fontStyle;
+        this.textColor = textColor;
 
         if (underline) {
             this.underlinePos = this.bodySize / 2 + 2;
@@ -44,8 +45,9 @@ var Letter = function () {
         key: "drawWithUnderline",
         value: function drawWithUnderline() {
             rectMode(CENTER);
+            fill(this.textColor);
             rect(0, this.underlinePos, this.bodySize, this.underlineSize);
-            fill(0);
+
             textSize(this.fontSize);
             textStyle(this.fontStyle);
             textFont(this.font);
@@ -54,7 +56,9 @@ var Letter = function () {
     }, {
         key: "drawWithoutUnderline",
         value: function drawWithoutUnderline() {
-            fill(0);
+            //noFill();
+            //rect(0,0,this.bodySize,this.bodySize);
+            fill(this.textColor);
             textSize(this.fontSize);
             textStyle(this.fontStyle);
             textFont(this.font);

@@ -1,6 +1,6 @@
 
 class Letter {
-    constructor(x, y, bodySize, c, font, fontSize, offsetX, offsetY, exitForce, randomForce, fontStyle, underline) {
+    constructor(x, y, bodySize, c, font, fontSize, offsetX, offsetY, exitForce, randomForce, fontStyle, underline,textColor) {
 
         this.body = Matter.Bodies.rectangle(x, y, bodySize, bodySize);
         Matter.World.add(world, this.body);
@@ -14,6 +14,7 @@ class Letter {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.fontStyle = fontStyle;
+        this.textColor = textColor;
 
         if(underline){
         this.underlinePos = this.bodySize / 2 + 2;
@@ -38,8 +39,9 @@ class Letter {
 
     drawWithUnderline(){
         rectMode(CENTER);
+        fill(this.textColor);
         rect(0, this.underlinePos, this.bodySize, this.underlineSize);
-        fill(0);
+
         textSize(this.fontSize);
         textStyle(this.fontStyle);
         textFont(this.font);
@@ -47,7 +49,9 @@ class Letter {
     }
 
     drawWithoutUnderline(){
-        fill(0);
+        //noFill();
+        //rect(0,0,this.bodySize,this.bodySize);
+        fill(this.textColor);
         textSize(this.fontSize);
         textStyle(this.fontStyle);
         textFont(this.font);

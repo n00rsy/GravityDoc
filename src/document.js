@@ -8,13 +8,15 @@ let bottomWall, topWall, rightWall, leftWall;
 let world, engine;
 let mouseConstraint;
 
-let canvas;
+let canvas, canvasSize;
 
 let fps;
-let font, fontSize, fontStyle, underline, bodySize;
+let font, fontSize, fontStyle, underline, bodySize, textColor;
 let textOffsetX, textOffsetY;
 let gravityStrength, exitForce, randomForce;
 let cursorBoundX, cursorBoundY;
+
+let moveCursor, spaceChars;
 
 var listener = new window.keypress.Listener();
 
@@ -23,27 +25,28 @@ var listener = new window.keypress.Listener();
 function setup() {
 
     fps = 60;
-    font = "monospace";
-    fontSize = 20;
-    bodySize = 15;
-    textOffsetX = -5;
-    textOffsetY = 8;
-
     frameRate(fps);
-    var canvasSize = 640;
+    canvasSize = screen.height * 0.55;
+
     canvas = createCanvas(canvasSize, canvasSize * 11 / 8.5);
     canvas.parent('docContainer');
     canvas.id('doc');
     engine = Matter.Engine.create();
     world = engine.world;
 
-    setGravityStrength();
-    shiftGravity();
+    setGravity();
     setExitForce();
     setRandom();
     setFontStyle();
+    setFont();
+    setFontSize();
+    setSpaceChars();
+    setTextColor();
+    setMoveCursor();
+    setDocumentTitle("Gravity Doc");
 
     addKeyListeners();
+
 
     var marginSize = width * 0.125;
 
@@ -66,8 +69,6 @@ function setup() {
     canvasmouse.element.removeEventListener("DOMMouseScroll", canvasmouse.mousewheel);
     mouseConstraint = Matter.MouseConstraint.create(engine, options);
     Matter.World.add(world, mouseConstraint);
-
-
 }
 function mouseClicked(event) {
     if ((mouseX > cursorBoundX && mouseX < width - cursorBoundX) && (mouseY > cursorBoundY && mouseY < height - cursorBoundY)) {
@@ -82,52 +83,53 @@ function mouseClicked(event) {
     }
 }
 
-function undo(moveCursor) {
+function undo() {
     var c = typedCharacters.pop();
     if (c != null) {
         deletedCharacters.push(c);
-        if (moveCursor) {
-            if (c == "\n") {
-                myCursor.stepUp(bodySize);
-            }
-            else if (c == "\t") {
-                myCursor.stepBack(bodySize);
-                myCursor.stepBack(bodySize);
-                myCursor.stepBack(bodySize);
-                myCursor.stepBack(bodySize);
-            }
-
-            else {
-                myCursor.stepBack(bodySize);
-            }
+        if (c == "\n") {
+            myCursor.stepUp(bodySize, moveCursor);
         }
-        if (c != "\t" && c != "\n" && c != " " && letters.length > 0) {
+        else if (c == "\t") {
+            myCursor.stepBack(bodySize, moveCursor);
+            myCursor.stepBack(bodySize, moveCursor);
+            myCursor.stepBack(bodySize, moveCursor);
+            myCursor.stepBack(bodySize, moveCursor);
+        }
+        else {
+            myCursor.stepBack(bodySize, moveCursor);
+        }
+        if (letters.length > 0 && (c != "\t" && c != "\n") || (c == " " && spaceChars)) {
             letters[letters.length - 1].remove();
             deletedLetters.push(letters.pop());
         }
+        /*
+        if (c != "\t" && c != "\n" && (c == " " &&spaceChars) && letters.length > 0) {
+            letters[letters.length - 1].remove();
+            deletedLetters.push(letters.pop());
+        }
+        */
     }
 }
 
-function redo(moveCursor) {
+function redo() {
     var c = deletedCharacters.pop();
     if (c != null) {
         typedCharacters.push(c);
-        if (moveCursor) {
-            if (c == "\n") {
-                myCursor.stepDown(bodySize);
-            }
-
-            else if (c == "\t") {
-                myCursor.step(bodySize);
-                myCursor.step(bodySize);
-                myCursor.step(bodySize);
-                myCursor.step(bodySize);
-            }
-            else {
-                myCursor.step(bodySize);
-            }
+        if (c == "\n") {
+            myCursor.stepDown(bodySize);
         }
-        if (c != "\t" && c != "\n" && c != " " && deletedLetters.length > 0) {
+
+        else if (c == "\t") {
+            myCursor.step(bodySize, moveCursor);
+            myCursor.step(bodySize, moveCursor);
+            myCursor.step(bodySize, moveCursor);
+            myCursor.step(bodySize, moveCursor);
+        }
+        else {
+            myCursor.step(bodySize, moveCursor);
+        }
+        if (letters.length > 0 && (c != "\t" && c != "\n") || (c == " " && spaceChars)) {
             deletedLetters[deletedLetters.length - 1].add();
             letters.push(deletedLetters.pop());
         }
@@ -140,11 +142,12 @@ function reset() {
 }
 
 function saveDoc() {
-    save(document.getElementById("docTitle").textContent);
+    //console.log(document.getElementById("docTitle").textContent);
+    saveCanvas(document.getElementById("docTitle").textContent);
 }
 
-function shiftGravity() {
-
+function setGravity() {
+    gravityStrength = document.getElementById("gravityStrength").value / 20;
     var e = document.getElementsByName('gravity');
     var i;
     for (i = 0; i < e.length; i++) {
@@ -160,29 +163,30 @@ function shiftGravity() {
             world.gravity.y = 0;
             break;
         //right
-        case 2:
+        case 3:
             world.gravity.x = gravityStrength;
             world.gravity.y = 0;
             break;
-        //up/down
+        //up
         case 1:
-            if (world.gravity.y == 0) {
-                world.gravity.y = world.gravity.x;
-                world.gravity.x = 0;
-            }
-            else {
-                world.gravity.y = -world.gravity.y;
-            }
+            world.gravity.x = 0;
+            world.gravity.y = -gravityStrength;
+            break;
+        //down
+        case 2:
+            world.gravity.x = 0;
+            world.gravity.y = gravityStrength;
             break;
     }
     canvas.elt.focus();
 }
 
-function changeFont() {
+function setFont() {
     font = document.getElementById("fontSelect").value.toLowerCase();
+    console.log("Font is: " + document.getElementById("fontSelect").value.toLowerCase());
 }
 
-function changeFontSize() {
+function setFontSize() {
 
     var s = parseInt(document.getElementById("fontSizeSelect").value.slice(0, -3));
     switch (s) {
@@ -238,23 +242,14 @@ function setFontStyle() {
     underline = e[2].checked;
 }
 
-function setGravityStrength() {
-    gravityStrength = document.getElementById("gravityStrength").value / 20;
-    console.log(gravityStrength);
-
-    if (world.gravity.x > 0) {
-        world.gravity.x = gravityStrength;
-    }
-    else if (world.gravity.x < 0) {
-        world.gravity.x = -gravityStrength;
-    }
-    else if (world.gravity.y > 0) {
-        world.gravity.y = gravityStrength;
-    }
-    else if (world.gravity.y <= 0) {
-        world.gravity.y = -gravityStrength;
-    }
+function setTextColor() {
+    textColor = document.getElementById("textColorPicker").value;
 }
+
+function setMoveCursor() {
+    moveCursor = document.getElementById("moveCursor").checked;
+}
+
 
 function setExitForce() {
     exitForce = document.getElementById("exitForce").value / 5;
@@ -271,62 +266,77 @@ function test() {
     console.log("testing");
 }
 
+function setSpaceChars() {
+    spaceChars = document.getElementById("spaceChars").checked;
+}
+
 
 function handleKeyDown(e) {
+
     if ((e.keyCode >= 186 && e.keyCode <= 192) || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 219 && e.keyCode <= 222)) {
         var c = e.key;
-        myCursor.step(bodySize);
+        myCursor.step(bodySize, moveCursor);
         var r = Math.random() * randomForce - randomForce / 2;
-        letters.push(new Letter(myCursor.x, myCursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline));
+        letters.push(new Letter(myCursor.x, myCursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline, textColor));
         typedCharacters.push(e.key);
     }
     //space
     else if (e.keyCode == 32) {
-        myCursor.step(bodySize);
+        myCursor.step(bodySize, moveCursor);
         e.preventDefault();
         typedCharacters.push(e.key);
+        if (spaceChars) {
+            var r = Math.random() * randomForce - randomForce / 2;
+            letters.push(new Letter(myCursor.x, myCursor.y, bodySize, " ", font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline, textColor));
+            typedCharacters.push(e.key);
+        }
     }
     //backspace
     else if (e.keyCode == 8) {
-        undo(true);
+        undo();
 
     }
     //enter
     else if (e.keyCode == 13) {
-        myCursor.stepDown(bodySize);
+        myCursor.stepDown(bodySize, moveCursor);
         typedCharacters.push("\n");
     }
     //tab
     else if (e.keyCode == 9) {
-        myCursor.step(bodySize);
-        myCursor.step(bodySize);
-        myCursor.step(bodySize);
-        myCursor.step(bodySize);
+        myCursor.step(bodySize, moveCursor);
+        myCursor.step(bodySize, moveCursor);
+        myCursor.step(bodySize, moveCursor);
+        myCursor.step(bodySize, moveCursor);
         e.preventDefault();
         typedCharacters.push("\t");
     }
     //up arrow
     else if (e.keyCode == 38) {
-        myCursor.stepUp(bodySize);
+        myCursor.stepUp(bodySize, moveCursor);
         e.preventDefault();
     }
     //down arrow
     else if (e.keyCode == 40) {
-        myCursor.stepDown(bodySize);
+        myCursor.stepDown(bodySize, moveCursor);
         e.preventDefault();
     }
     //right arrow
     else if (e.keyCode == 39) {
-        myCursor.step(bodySize);
+        myCursor.step(bodySize, moveCursor);
         e.preventDefault();
     }
     //left arrow
     else if (e.keyCode == 37) {
-        myCursor.stepBack(bodySize);
+        myCursor.stepBack(bodySize, moveCursor);
         e.preventDefault();
     }
     //console.log("pressed " + e.key + " " + e.keyCode);
-    console.log(typedCharacters.join(""));
+    //console.log(typedCharacters.join(""));
+}
+
+function setDocumentTitle(newName){
+    document.getElementById("docTitle").textContent = newName;
+    document.title = newName;
 }
 
 function addKeyListeners() {
@@ -334,29 +344,40 @@ function addKeyListeners() {
     window.addEventListener("keydown", handleKeyDown, false);
 
     listener.simple_combo("ctrl z", function () {
-        undo(true);
+        undo();
     });
     listener.simple_combo("ctrl shift z", function () {
         console.log("yeee");
-        redo(true);
+        redo();
     });
 
     listener.simple_combo("ctrl s", function () {
-        myCursor.dontShow();
+
         saveDoc(document.getElementById("docTitle").textContent);
     });
 
     listener.simple_combo("ctrl n", function () {
         newDoc();
     });
+    listener.simple_combo("ctrl c", function () {
+        navigator.clipboard.writeText(typedCharacters.join(""))
+            .catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+    });
+    listener.simple_combo("ctrl v", async function () {
+        const text = await navigator.clipboard.readText();
+        for (i = 0; i < text.length; i++) {
+            setTimeout(() => { handleKeyDown({ key: text[i], keyCode: text.charCodeAt(i) }); }, 100);
+        }
+        console.log(text);
+    });
 
-    listener.sequence_combo("up up down down left right left right b a enter", function() {
+    listener.sequence_combo("up up down down left right left right b a enter", function () {
         console.log("achieved beastmode");
     }, true);
 
 }
-
-
 
 function removeKeyListeners() {
     console.log("removing keypress listener");
