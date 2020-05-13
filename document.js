@@ -99,29 +99,28 @@ function mouseClicked(event) {
 
 function undo() {
     var c = typedCharacters.pop();
-    if (c != null) {
-        deletedCharacters.push(c);
-        if (c == "\n") {
-            myCursor.stepUp(bodySize, moveCursor);
-        } else if (c == "\t") {
-            myCursor.stepBack(bodySize, moveCursor);
-            myCursor.stepBack(bodySize, moveCursor);
-            myCursor.stepBack(bodySize, moveCursor);
-            myCursor.stepBack(bodySize, moveCursor);
-        } else {
-            myCursor.stepBack(bodySize, moveCursor);
-        }
-        if (letters.length > 0 && c != "\t" && c != "\n" || c == " " && spaceChars) {
-            letters[letters.length - 1].remove();
-            deletedLetters.push(letters.pop());
-        }
-        /*
-        if (c != "\t" && c != "\n" && (c == " " &&spaceChars) && letters.length > 0) {
-            letters[letters.length - 1].remove();
-            deletedLetters.push(letters.pop());
-        }
-        */
+
+    deletedCharacters.push(c);
+    if (c == "\n") {
+        myCursor.stepUp(bodySize, moveCursor);
+    } else if (c == "\t") {
+        myCursor.stepBack(bodySize, moveCursor);
+        myCursor.stepBack(bodySize, moveCursor);
+        myCursor.stepBack(bodySize, moveCursor);
+        myCursor.stepBack(bodySize, moveCursor);
+    } else {
+        myCursor.stepBack(bodySize, moveCursor);
     }
+    if (letters.length > 0 && c != "\t" && c != "\n" || c == " " && spaceChars) {
+        letters[letters.length - 1].remove();
+        deletedLetters.push(letters.pop());
+    }
+    /*
+    if (c != "\t" && c != "\n" && (c == " " &&spaceChars) && letters.length > 0) {
+        letters[letters.length - 1].remove();
+        deletedLetters.push(letters.pop());
+    }
+    */
 }
 
 function redo() {
@@ -281,10 +280,9 @@ function setSpaceChars() {
 function handleKeyDown(e) {
 
     if (e.keyCode >= 186 && e.keyCode <= 192 || e.keyCode >= 65 && e.keyCode <= 90 || e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 219 && e.keyCode <= 222) {
-        var c = e.key;
         myCursor.step(bodySize, moveCursor);
         var r = Math.random() * randomForce - randomForce / 2;
-        letters.push(new Letter(myCursor.x, myCursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline, textColor));
+        letters.push(new Letter(myCursor.x, myCursor.y, bodySize, e.key, font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline, textColor));
         typedCharacters.push(e.key);
     }
     //space
@@ -295,7 +293,6 @@ function handleKeyDown(e) {
             if (spaceChars) {
                 var r = Math.random() * randomForce - randomForce / 2;
                 letters.push(new Letter(myCursor.x, myCursor.y, bodySize, " ", font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline, textColor));
-                typedCharacters.push(e.key);
             }
         }
         //backspace
@@ -382,11 +379,7 @@ function addKeyListeners() {
                     case 2:
                         text = _context.sent;
 
-                        for (i = 0; i < text.length; i++) {
-                            setTimeout(function () {
-                                handleKeyDown({ key: text[i], keyCode: text.charCodeAt(i) });
-                            }, 100);
-                        }
+                        spawnString(text, text.length - 1);
                         console.log(text);
 
                     case 5:
@@ -406,6 +399,22 @@ function removeKeyListeners() {
     console.log("removing keypress listener");
     window.removeEventListener("keydown", handleKeyDown, false);
 }
+
+function spawnChar(c) {
+    myCursor.step(bodySize, moveCursor);
+    var r = Math.random() * randomForce - randomForce / 2;
+    letters.push(new Letter(myCursor.x, myCursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline, textColor));
+    typedCharacters.push(c);
+}
+
+function spawnString(s, i) {
+    setTimeout(function () {
+        console.log("spawning char " + s[s.length - 1 - i]); //  your code here  
+        spawnChar(s[s.length - 1 - i]);
+        if (--i) spawnString(s, i); //  decrement i and call myLoop again if i > 0
+    }, 10);
+}
+
 function draw() {
     background(255);
     Matter.Engine.update(engine);
