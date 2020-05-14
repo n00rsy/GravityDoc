@@ -1,6 +1,6 @@
 
 class ImageBody {
-    constructor(x, y, img, exitForce, randomForce) {
+    constructor(x, y, img) {
 
         this.img = img;
         this.height = canvas.height*0.2;
@@ -9,10 +9,8 @@ class ImageBody {
         this.body = Matter.Bodies.rectangle(x, y, this.width, this.height);
         Matter.World.add(world, this.body);
 
-        Matter.Body.setVelocity(this.body, { x: -exitForce + randomForce, y: randomForce });
-        Matter.Body.setAngularVelocity(this.body, randomForce / 13);
-
         this.drawImg = this.drawNormalImg;
+        this.inWorld = false;
     }
 
     show() {
@@ -38,9 +36,12 @@ class ImageBody {
 
     remove() {
         Matter.Composite.remove(world, this.body);
+        this.inWorld = false;
     }
     add() {
         Matter.Composite.add(world, this.body);
+        Matter.Body.setAngularVelocity(this.body, 0.5);
+        this.inWorld = true;
     }
 
 }

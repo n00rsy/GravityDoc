@@ -10,9 +10,8 @@ let bottomWall, topWall, rightWall, leftWall;
 let world, engine;
 let mouseConstraint;
 
-let canvas, canvasSize;
+let canvas, canvasSize,fps;
 
-let fps;
 let font, fontSize, fontStyle, underline, bodySize, textColor;
 let textOffsetX, textOffsetY;
 let gravityStrength, exitForce, randomForce;
@@ -20,22 +19,21 @@ let cursorBoundX, cursorBoundY;
 
 let moveCursor, spaceChars;
 
-let red,green,blue, rainbow;
-let sideWalls;
+let sideWalls, interruptPaste;
 
 var listener = new window.keypress.Listener();
 
-let the;
-let goodJob;
+let the, theImgBody;
+let goodJob, goodJobImgBody;
 function preload() {
   // preload() runs once
+  console.log("new update 1");
   the = loadImage("src/img/assets/the.png");
-  goodJob = loadImage("src/img/assets/goodJob.gif");
+  goodJob = loadImage("src/img/assets/goodJob.png");
 }
 
 
 function setup() {
-
     fps = 60;
     frameRate(fps);
     canvasSize = screen.height * 0.55;
@@ -56,16 +54,20 @@ function setup() {
     setTextColor();
     setMoveCursor();
     setDocumentTitle("Gravity Doc");
-    red = 255;
-    blue = 0;
-    green = 0;
     rainbow = false;
     sideWalls = true;
-
+    interruptPaste = false;
     addKeyListeners();
 
-
     var marginSize = width * 0.125;
+    theImgBody = new ImageBody(100,100, the);
+    theImgBody.remove();
+    goodJobImgBody = new ImageBody(100,200, goodJob);
+    goodJobImgBody.remove();
+    
+
+
+
 
     bottomWall = new Boundary(width / 2, height - (marginSize / 2), width, marginSize);
     topWall = new Boundary(width / 2, (marginSize / 2), width, marginSize);
@@ -101,6 +103,7 @@ function mouseClicked(event) {
 }
 
 function undo() {
+    interruptPaste = true;
     var c = typedCharacters.pop();
 
     deletedCharacters.push(c);
@@ -164,7 +167,7 @@ function saveDoc() {
 }
 
 function setGravity() {
-    gravityStrength = document.getElementById("gravityStrength").value / 20;
+    gravityStrength = document.getElementById("gravityStrength").value / 18;
     var e = document.getElementsByName('gravity');
     var i;
     for (i = 0; i < e.length; i++) {
@@ -263,6 +266,11 @@ function setTextColor() {
     textColor = document.getElementById("textColorPicker").value;
 }
 
+function generateNewColor(){
+    document.getElementById("textColorPicker").value = "#" + Math.random().toString(16).slice(2, 8);
+    setTextColor();
+}
+
 function setMoveCursor() {
     moveCursor = document.getElementById("moveCursor").checked;
 }
@@ -287,18 +295,13 @@ function setSpaceChars() {
     spaceChars = document.getElementById("spaceChars").checked;
 }
 function updateGlobalRainbowColors(){
-    if(red==255 && green ==255){
-        blue
-    }
+
 }
 
 function handleKeyDown(e) {
-
+    if(rainbow) generateNewColor();
     if ((e.keyCode >= 186 && e.keyCode <= 192) || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 219 && e.keyCode <= 222)) {
-        myCursor.step(bodySize, moveCursor);
-        var r = Math.random() * randomForce - randomForce / 2;
-        letters.push(new Letter(myCursor.x, myCursor.y, bodySize, e.key, font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline, textColor));
-        typedCharacters.push(e.key);
+        spawnChar(e.key);
     }
     //space
     else if (e.keyCode == 32) {
@@ -385,23 +388,25 @@ function addKeyListeners() {
     });
     listener.simple_combo("ctrl v", async function () {
         const text = await navigator.clipboard.readText();
+        interruptPaste = false;
+        console.log(interruptPaste);
         spawnString(text,text.length-1);
         console.log(text);
     });
 
     listener.sequence_combo("up up down down left right left right b a enter", function () {
-        console.log("this is a sponegebob reference. ikykyk");
-        images.push(new ImageBody(myCursor.x,myCursor.y, the, exitForce, randomForce))
+        console.log("The inner machinations of my mind are an enigma. – Patrick Star");
+        if(theImgBody.inWorld) removeImgBody(theImgBody);
+        else addImgBody(theImgBody);
     }, true);
-
+    listener.sequence_combo("a b c right left right left up down down up a b c enter", function () {
+        console.log("Keep it up!");
+        if(goodJobImgBody.inWorld) removeImgBody(goodJobImgBody);
+        else addImgBody(goodJobImgBody);
+    }, true);
     listener.sequence_combo("up down up down left right enter", function () {
         console.log("😎😎😎");
-        letters.forEach(element => element.drawLetter = element.drawWithColors);
         rainbow = !rainbow;
-    }, true);
-    listener.sequence_combo("right left right left up down down up enter", function () {
-        console.log("Keep it up!");
-        images.push(new ImageBody(myCursor.x,myCursor.y, goodJob, exitForce, randomForce))
     }, true);
     listener.sequence_combo("left left right right left right enter", function () {
         console.log("toggle side walls");
@@ -417,10 +422,10 @@ function addKeyListeners() {
     }, true);
     listener.sequence_combo("up up s t a r down down enter", function () {
         console.log("star war mode activated");
+        interruptPaste = false;
         var star = "Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not. It’s not a story the Jedi would tell you. It’s a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life…";
         spawnString(star, star.length-1);
     }, true);
-
 }
 
 function removeKeyListeners() {
@@ -435,11 +440,25 @@ function spawnChar(c) {
     typedCharacters.push(c);
 }
 
+function removeImgBody(imgBody){
+    imgBody.remove();
+    for(var i =0;i<images.length;i++){
+        if(images[i]==imgBody){
+            images.splice(i, 1)
+        }
+    }
+}
+function addImgBody(imgBody){
+    imgBody.add();
+    images.push(imgBody);
+}
+
+
 function spawnString(s,i) {
     setTimeout(function () {
-        console.log("spawning char "+ s[s.length-1-i]); //  your code here  
+        //console.log("spawning char "+ s[s.length-1-i]); //  your code here  
         spawnChar(s[s.length-1-i]);
-        if (--i) spawnString(s,i);   //  decrement i and call myLoop again if i > 0
+        if (--i &&!interruptPaste) spawnString(s,i);
     }, 10)
 }
 
@@ -448,7 +467,6 @@ function draw() {
     Matter.Engine.update(engine);
     letters.forEach(element => element.show());
     images.forEach(element => element.show());
-    if(rainbow) updateGlobalRainbowColors();
     /*
     leftWall.show_debug();
     rightWall.show_debug();

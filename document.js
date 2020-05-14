@@ -56,7 +56,7 @@ function preload() {
 }
 
 function setup() {
-
+    console.log("new update");
     fps = 60;
     frameRate(fps);
     canvasSize = screen.height * 0.55;
@@ -176,7 +176,7 @@ function saveDoc() {
 }
 
 function setGravity() {
-    gravityStrength = document.getElementById("gravityStrength").value / 20;
+    gravityStrength = document.getElementById("gravityStrength").value / 18;
     var e = document.getElementsByName('gravity');
     var i;
     for (i = 0; i < e.length; i++) {
@@ -417,7 +417,7 @@ function addKeyListeners() {
     })));
 
     listener.sequence_combo("up up down down left right left right b a enter", function () {
-        console.log("this is a sponegebob reference. ikykyk");
+        console.log("The inner machinations of my mind are an enigma. – Shakespeare");
         images.push(new ImageBody(myCursor.x, myCursor.y, the, exitForce, randomForce));
     }, true);
 
@@ -428,7 +428,7 @@ function addKeyListeners() {
         });
         rainbow = !rainbow;
     }, true);
-    listener.sequence_combo("right left right left up down down up enter", function () {
+    listener.sequence_combo("a b c right left right left up down down up a b c enter", function () {
         console.log("Keep it up!");
         images.push(new ImageBody(myCursor.x, myCursor.y, goodJob, exitForce, randomForce));
     }, true);

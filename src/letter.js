@@ -6,7 +6,7 @@ class Letter {
         Matter.World.add(world, this.body);
 
         Matter.Body.setVelocity(this.body, { x: -exitForce + randomForce, y: randomForce });
-        Matter.Body.setAngularVelocity(this.body, randomForce / 13);
+        Matter.Body.setAngularVelocity(this.body, randomForce / 10);
 
         this.bodySize = bodySize;
         this.font = font;
@@ -58,15 +58,8 @@ class Letter {
         text(this.c, this.offsetX, this.offsetY);
     }
 
-    drawWithColors(){
-        fill(red,green,blue);
-        textSize(this.fontSize);
-        textStyle(this.fontStyle);
-        textFont(this.font);
-        text(this.c, this.offsetX, this.offsetY);
-    }
-
     remove() {
+        
         Matter.Composite.remove(world, this.body);
     }
     add() {
