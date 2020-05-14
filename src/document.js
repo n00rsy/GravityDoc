@@ -10,7 +10,7 @@ let bottomWall, topWall, rightWall, leftWall;
 let world, engine;
 let mouseConstraint;
 
-let canvas, canvasSize,fps;
+let canvas, canvasSize, fps;
 
 let font, fontSize, fontStyle, underline, bodySize, textColor;
 let textOffsetX, textOffsetY;
@@ -19,17 +19,17 @@ let cursorBoundX, cursorBoundY;
 
 let moveCursor, spaceChars;
 
-let sideWalls, interruptPaste;
+let sideWalls, interruptPaste, rainbow, shouldRotate;
 
 var listener = new window.keypress.Listener();
 
 let the, theImgBody;
 let goodJob, goodJobImgBody;
 function preload() {
-  // preload() runs once
-  console.log("new update 1");
-  the = loadImage("src/img/assets/the.png");
-  goodJob = loadImage("src/img/assets/goodJob.png");
+    // preload() runs once
+    console.log("new update 1");
+    the = loadImage("src/img/assets/the.png");
+    goodJob = loadImage("src/img/assets/goodJob.png");
 }
 
 
@@ -55,16 +55,17 @@ function setup() {
     setMoveCursor();
     setDocumentTitle("Gravity Doc");
     rainbow = false;
+    shouldRotate = false;
     sideWalls = true;
     interruptPaste = false;
     addKeyListeners();
 
     var marginSize = width * 0.125;
-    theImgBody = new ImageBody(100,100, the);
+    theImgBody = new ImageBody(100, 100, the);
     theImgBody.remove();
-    goodJobImgBody = new ImageBody(100,200, goodJob);
+    goodJobImgBody = new ImageBody(100, 200, goodJob);
     goodJobImgBody.remove();
-    
+
 
 
 
@@ -266,7 +267,7 @@ function setTextColor() {
     textColor = document.getElementById("textColorPicker").value;
 }
 
-function generateNewColor(){
+function generateNewColor() {
     document.getElementById("textColorPicker").value = "#" + Math.random().toString(16).slice(2, 8);
     setTextColor();
 }
@@ -294,12 +295,12 @@ function test() {
 function setSpaceChars() {
     spaceChars = document.getElementById("spaceChars").checked;
 }
-function updateGlobalRainbowColors(){
+function updateGlobalRainbowColors() {
 
 }
 
 function handleKeyDown(e) {
-    if(rainbow) generateNewColor();
+    if (rainbow) generateNewColor();
     if ((e.keyCode >= 186 && e.keyCode <= 192) || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 219 && e.keyCode <= 222)) {
         spawnChar(e.key);
     }
@@ -360,6 +361,20 @@ function setDocumentTitle(newName) {
     document.title = newName;
 }
 
+ async function copyText() {
+    navigator.clipboard.writeText(typedCharacters.join(""))
+        .catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+}
+async function pasteText(){
+    const text = await navigator.clipboard.readText();
+    interruptPaste = false;
+    //console.log(interruptPaste);
+    spawnString(text, text.length - 1);
+    console.log(text);
+}
+
 function addKeyListeners() {
     console.log("adding keypress listener");
     window.addEventListener("keydown", handleKeyDown, false);
@@ -367,54 +382,61 @@ function addKeyListeners() {
     listener.simple_combo("ctrl z", function () {
         undo();
     });
+    listener.simple_combo("cmd z", function () {
+        undo();
+    });
+
     listener.simple_combo("ctrl shift z", function () {
         console.log("yeee");
         redo();
     });
 
     listener.simple_combo("ctrl s", function () {
-
+        saveDoc(document.getElementById("docTitle").textContent);
+    });
+    listener.simple_combo("cmd s", function () {
         saveDoc(document.getElementById("docTitle").textContent);
     });
 
     listener.simple_combo("ctrl n", function () {
         newDoc();
     });
+
     listener.simple_combo("ctrl c", function () {
-        navigator.clipboard.writeText(typedCharacters.join(""))
-            .catch(err => {
-                console.error('Could not copy text: ', err);
-            });
+        copyText();
     });
-    listener.simple_combo("ctrl v", async function () {
-        const text = await navigator.clipboard.readText();
-        interruptPaste = false;
-        console.log(interruptPaste);
-        spawnString(text,text.length-1);
-        console.log(text);
+    listener.simple_combo("cmd c", function () {
+        copyText();
+    });
+
+    listener.simple_combo("ctrl v",  function () {
+        pasteText();
+    });
+    listener.simple_combo("cmd v", function () {
+        pasteText();
     });
 
     listener.sequence_combo("up up down down left right left right b a enter", function () {
         console.log("The inner machinations of my mind are an enigma. – Patrick Star");
-        if(theImgBody.inWorld) removeImgBody(theImgBody);
+        if (theImgBody.inWorld) removeImgBody(theImgBody);
         else addImgBody(theImgBody);
     }, true);
     listener.sequence_combo("a b c right left right left up down down up a b c enter", function () {
         console.log("Keep it up!");
-        if(goodJobImgBody.inWorld) removeImgBody(goodJobImgBody);
+        if (goodJobImgBody.inWorld) removeImgBody(goodJobImgBody);
         else addImgBody(goodJobImgBody);
     }, true);
-    listener.sequence_combo("up down up down left right enter", function () {
+    listener.sequence_combo("r o y g b i v down down enter", function () {
         console.log("😎😎😎");
         rainbow = !rainbow;
     }, true);
     listener.sequence_combo("left left right right left right enter", function () {
         console.log("toggle side walls");
-        if(sideWalls){
+        if (sideWalls) {
             Matter.Composite.remove(world, rightWall.body);
             Matter.Composite.remove(world, leftWall.body);
         }
-        else{
+        else {
             Matter.Composite.add(world, rightWall.body);
             Matter.Composite.add(world, leftWall.body);
         }
@@ -424,7 +446,11 @@ function addKeyListeners() {
         console.log("star war mode activated");
         interruptPaste = false;
         var star = "Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not. It’s not a story the Jedi would tell you. It’s a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life…";
-        spawnString(star, star.length-1);
+        spawnString(star, star.length - 1);
+    }, true);
+    listener.sequence_combo("right down left up enter", function () {
+        console.log("What about the reality where Hitler cured cancer, Morty? The answer is: don’t think about it.");
+        shouldRotate = !shouldRotate;
     }, true);
 }
 
@@ -440,29 +466,39 @@ function spawnChar(c) {
     typedCharacters.push(c);
 }
 
-function removeImgBody(imgBody){
+function removeImgBody(imgBody) {
     imgBody.remove();
-    for(var i =0;i<images.length;i++){
-        if(images[i]==imgBody){
+    for (var i = 0; i < images.length; i++) {
+        if (images[i] == imgBody) {
             images.splice(i, 1)
         }
     }
 }
-function addImgBody(imgBody){
+function addImgBody(imgBody) {
     imgBody.add();
     images.push(imgBody);
 }
 
-
-function spawnString(s,i) {
+function spawnString(s, i) {
     setTimeout(function () {
-        //console.log("spawning char "+ s[s.length-1-i]); //  your code here  
+        //console.log("spawning char "+ s[s.length-1-i]+" "+ i); //  your code here  
         spawnChar(s[s.length-1-i]);
-        if (--i &&!interruptPaste) spawnString(s,i);
+        if (i-- && !interruptPaste) spawnString(s, i);
     }, 10)
 }
 
+var a = 0.0;
+var twoPI = Math.PI*2;
+var rotateStep = Math.PI*0.01;
+function rotateGravity(){
+    if(a>twoPI) a=0;
+    world.gravity.x = Math.cos(a)*gravityStrength;
+    world.gravity.y = Math.sin(a)*gravityStrength;
+    a+=rotateStep;
+}
+
 function draw() {
+    if(shouldRotate) rotateGravity();
     background(255);
     Matter.Engine.update(engine);
     letters.forEach(element => element.show());
