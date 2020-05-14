@@ -2,6 +2,8 @@ let letters = [];
 let deletedLetters = [];
 let typedCharacters = [];
 let deletedCharacters = [];
+let images = [];
+let deletedImages = [];
 
 let myCursor;
 let bottomWall, topWall, rightWall, leftWall;
@@ -18,8 +20,18 @@ let cursorBoundX, cursorBoundY;
 
 let moveCursor, spaceChars;
 
+let red,green,blue, rainbow;
+let sideWalls;
+
 var listener = new window.keypress.Listener();
 
+let the;
+let goodJob;
+function preload() {
+  // preload() runs once
+  the = loadImage("src/img/assets/the.png");
+  goodJob = loadImage("src/img/assets/goodJob.gif");
+}
 
 
 function setup() {
@@ -44,6 +56,11 @@ function setup() {
     setTextColor();
     setMoveCursor();
     setDocumentTitle("Gravity Doc");
+    red = 255;
+    blue = 0;
+    green = 0;
+    rainbow = false;
+    sideWalls = true;
 
     addKeyListeners();
 
@@ -269,7 +286,11 @@ function test() {
 function setSpaceChars() {
     spaceChars = document.getElementById("spaceChars").checked;
 }
-
+function updateGlobalRainbowColors(){
+    if(red==255 && green ==255){
+        blue
+    }
+}
 
 function handleKeyDown(e) {
 
@@ -369,7 +390,35 @@ function addKeyListeners() {
     });
 
     listener.sequence_combo("up up down down left right left right b a enter", function () {
-        console.log("achieved beastmode");
+        console.log("this is a sponegebob reference. ikykyk");
+        images.push(new ImageBody(myCursor.x,myCursor.y, the, exitForce, randomForce))
+    }, true);
+
+    listener.sequence_combo("up down up down left right enter", function () {
+        console.log("😎😎😎");
+        letters.forEach(element => element.drawLetter = element.drawWithColors);
+        rainbow = !rainbow;
+    }, true);
+    listener.sequence_combo("right left right left up down down up enter", function () {
+        console.log("Keep it up!");
+        images.push(new ImageBody(myCursor.x,myCursor.y, goodJob, exitForce, randomForce))
+    }, true);
+    listener.sequence_combo("left left right right left right enter", function () {
+        console.log("toggle side walls");
+        if(sideWalls){
+            Matter.Composite.remove(world, rightWall.body);
+            Matter.Composite.remove(world, leftWall.body);
+        }
+        else{
+            Matter.Composite.add(world, rightWall.body);
+            Matter.Composite.add(world, leftWall.body);
+        }
+        sideWalls = !sideWalls;
+    }, true);
+    listener.sequence_combo("up up s t a r down down enter", function () {
+        console.log("star war mode activated");
+        var star = "Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not. It’s not a story the Jedi would tell you. It’s a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life…";
+        spawnString(star, star.length-1);
     }, true);
 
 }
@@ -398,7 +447,8 @@ function draw() {
     background(255);
     Matter.Engine.update(engine);
     letters.forEach(element => element.show());
-
+    images.forEach(element => element.show());
+    if(rainbow) updateGlobalRainbowColors();
     /*
     leftWall.show_debug();
     rightWall.show_debug();

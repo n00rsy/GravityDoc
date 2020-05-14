@@ -65,6 +65,15 @@ var Letter = function () {
             text(this.c, this.offsetX, this.offsetY);
         }
     }, {
+        key: "drawWithColors",
+        value: function drawWithColors() {
+            fill(red, green, blue);
+            textSize(this.fontSize);
+            textStyle(this.fontStyle);
+            textFont(this.font);
+            text(this.c, this.offsetX, this.offsetY);
+        }
+    }, {
         key: "remove",
         value: function remove() {
             Matter.Composite.remove(world, this.body);

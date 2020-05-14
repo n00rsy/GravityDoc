@@ -58,6 +58,14 @@ class Letter {
         text(this.c, this.offsetX, this.offsetY);
     }
 
+    drawWithColors(){
+        fill(red,green,blue);
+        textSize(this.fontSize);
+        textStyle(this.fontStyle);
+        textFont(this.font);
+        text(this.c, this.offsetX, this.offsetY);
+    }
+
     remove() {
         Matter.Composite.remove(world, this.body);
     }
