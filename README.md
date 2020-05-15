@@ -1,5 +1,5 @@
 # GravityDoc
-The physics simulation x. text editor you've always wanted. Visit the site [here](https://gravity-doc.com/).
+The physics simulation x text editor you've always wanted. Visit the site [here](https://gravity-doc.com/).
 
 ![](img/gravitydoc.gif)
 
