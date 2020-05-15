@@ -1,7 +1,6 @@
 
 class ImageBody {
     constructor(x, y, img) {
-
         this.img = img;
         this.height = canvas.height*0.2;
         this.width = this.height/img.height*img.width;
@@ -12,7 +11,6 @@ class ImageBody {
         this.drawImg = this.drawNormalImg;
         this.inWorld = false;
     }
-
     show() {
         const pos = this.body.position;
         const angle = this.body.angle;
@@ -29,7 +27,6 @@ class ImageBody {
         imageMode(CENTER);
         image(this.img,0,0,this.width,this.height);
     }
-
     remove() {
         Matter.Composite.remove(world, this.body);
         this.inWorld = false;

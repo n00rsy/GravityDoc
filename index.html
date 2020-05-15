@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.js"></script>
-    <script src="https://unpkg.com/matter-js@0.14.2/build/matter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.dom.min.js"></script>
+    <script src="https://unpkg.com/matter-js@0.14.2/build/matter.min.js"></script>
     <script src="libraries/keypress-2.1.5.min.js"></script>
     <script src="https://kit.fontawesome.com/5fc6b4bc93.js" crossorigin="anonymous"></script>
 
@@ -115,12 +115,11 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="modal" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -132,8 +131,8 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        Crafted with care by Noor Syed.💪<br>Check out the code on <a
-                            href="https://github.com/n00rsy/GravityDoc">Github</a>.
+                        Hacked together with care by Noor Syed.💪<br><br>Powered by matter.js, rendered by p5.js, interactivated by keypress, styled with bootstrap and delivered by AWS.<br><br>Check out the code on <a
+                            href="https://github.com/n00rsy/GravityDoc" target="_blank">Github</a>.
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -145,7 +144,7 @@
     <div id="navbar">
         <div class="container-fluid">
             <div class="row " style="margin-left: 1px">
-                <div class="col-md-2 col-sm-3" id="debug">
+                <div class="col-md-2 col-sm-3" >
                     <h1 id="docTitle" data-toggle="modal" data-target="#renameModal">Gravity Doc</h1>
                     <div id="leftMenuContainer">
                         <div class="btn-group" style="padding-top:10px">
@@ -160,11 +159,11 @@
                             </label>
                         </div>
                     </div>
-                    <div class="row" id="debug">
+                    <div class="row">
                     </div>
                 </div>
-                <div class="col-md-10 col-sm-9" id="debug">
-                    <div class="row" id="debug" style="border: thin solid#bdbdbd;">
+                <div class="col-md-10 col-sm-9">
+                    <div class="row" style="border: thin solid#bdbdbd;">
                         <div class="textButtonContainer">
                             <button role="button" type="button" class="btn" data-toggle="dropdown">
                                 File
@@ -203,10 +202,10 @@
                             </button>
                         </div>
                     </div>
-                    <div class="row" id="debug" style="padding-top:15px">
+                    <div class="row" style="padding-top:15px">
                         <div class="col-md-7 col-sm-12" style="height: 100%; width: fit-content;padding-right: 2vw;">
 
-                            <div class="form-row" id="debug">
+                            <div class="form-row">
                                 <div class="form-col">
                                     <select class="form-control" id="fontSelect"
                                         style="width:auto;border-radius: 0px;border-color: #bdbdbd;height: 100%;"
@@ -228,7 +227,7 @@
                                     <input type="color" id="textColorPicker" value="#000000" onchange="setTextColor()"
                                         style="height: 100%;background-color: white;border-color: #bdbdbd;">
                                 </div>
-                                <div class=" debug" style="height: 100%; flex: 1;display: flex;">
+                                <div style="height: 100%; flex: 1;display: flex;">
                                     <div style="height: 100%; flex: 1; min-width: 100px;">
 
                                         <div class="btn-group">
@@ -307,13 +306,12 @@
             </div>
         </div>
     </div>
-    <div id="footer" style = "padding-left:10px;padding-right:10px">
+    <div id="footer">
         <div style = "float:left;">Char Count: <span id ="charCount">0</span></div>
         <div id ="fpsStats" style = "float:right">FPS: <span id = "fpsStat">60</span></div>
-        
     </div>
 
-
+    <div id="p5_loading" class="loadingclass"></div>
     <div class="d-flex justify-content-center" id="docContainer"> </div>
     <script src="src/nameDocModal.js"></script>
     <script src="src/letter.js"></script>

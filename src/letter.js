@@ -26,7 +26,6 @@ class Letter {
         }
         this.c = c;
     }
-
     show() {
         const pos = this.body.position;
         const angle = this.body.angle;

@@ -9,7 +9,6 @@ class Cursor{
         this.lineSpacing = 1;
         this.showFunction = this.doShow;
     }
-
     step(){
         if(moveCursor){
         if(this.x+bodySize+this.letterSpacing<=width-cursorBoundX){
@@ -26,8 +25,7 @@ class Cursor{
             }
         }
     }
-        this.i=0;
-        
+        this.i=0;   
     }
     stepBack(){
         if(moveCursor){
@@ -48,7 +46,6 @@ class Cursor{
         this.i=0;
         
     }
-
     stepDown(){
         if(moveCursor){
         if(this.y+bodySize+this.lineSpacing<=height-cursorBoundY){
@@ -57,7 +54,6 @@ class Cursor{
     }
         this.i=0;
     }
-
     stepUp(){
         if(moveCursor){
         if(this.y-bodySize-this.lineSpacing>=this.cursorBoundY){
@@ -66,11 +62,9 @@ class Cursor{
     }
         this.i=0;
     }
-    
     show(bodySize){
         this.showFunction(bodySize);
     }
-
     doShow(bodySize){
         if(this.i<60){
             fill(0);
@@ -84,6 +78,5 @@ class Cursor{
         this.i++;
     }
     dontShow(){
-
     }
 }

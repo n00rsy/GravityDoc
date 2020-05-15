@@ -28,7 +28,6 @@ let the, theImgBody;
 let goodJob, goodJobImgBody;
 function preload() {
     // preload() runs once
-    console.log("new update 1");
     the = loadImage("img/assets/the.png");
     goodJob = loadImage("img/assets/goodjob.png");
 }
@@ -94,7 +93,6 @@ function mouseClicked(event) {
         myCursor.y = mouseY;
     }
 }
-
 function undo() {
     interruptPaste = true;
     var c = typedCharacters.pop();
@@ -117,7 +115,6 @@ function undo() {
         deletedLetters.push(letters.pop());
     }
 }
-
 function redo() {
     var c = deletedCharacters.pop();
     if (c != null) {
@@ -141,17 +138,12 @@ function redo() {
         }
     }
 }
-
 function reset() {
-    console.log("resetting");
     location.reload();
 }
-
 function saveDoc() {
-    //console.log(document.getElementById("docTitle").textContent);
     saveCanvas(document.getElementById("docTitle").textContent);
 }
-
 function setGravity() {
     gravityStrength = document.getElementById("gravityStrength").value / 18;
     var e = document.getElementsByName('gravity');
@@ -186,14 +178,10 @@ function setGravity() {
     }
     canvas.elt.focus();
 }
-
 function setFont() {
     font = document.getElementById("fontSelect").value.toLowerCase();
-    console.log("Font is: " + document.getElementById("fontSelect").value.toLowerCase());
 }
-
 function setFontSize() {
-
     var s = parseInt(document.getElementById("fontSizeSelect").value.slice(0, -3));
     switch (s) {
         case 12:
@@ -216,10 +204,7 @@ function setFontSize() {
             break;
     }
 }
-
-
 function setFontStyle() {
-    console.log("setting font style");
     var e = document.getElementsByName('fontStyle');
     var style = "";
     //bold
@@ -247,40 +232,30 @@ function setFontStyle() {
     }
     underline = e[2].checked;
 }
-
 function setTextColor() {
     textColor = document.getElementById("textColorPicker").value;
 }
-
 function generateNewColor() {
     document.getElementById("textColorPicker").value = "#" + Math.random().toString(16).slice(2, 8);
     setTextColor();
 }
-
 function setMoveCursor() {
     moveCursor = document.getElementById("moveCursor").checked;
 }
-
 function setExitForce() {
     exitForce = document.getElementById("exitForce").value / 5;
 }
 function setRandom() {
     randomForce = document.getElementById("random").value / 16;
 }
-
 function newDoc() {
     window.open(window.location.href, '_blank');
 }
-
 function test() {
     console.log("testing");
 }
-
 function setSpaceChars() {
     spaceChars = document.getElementById("spaceChars").checked;
-}
-function updateGlobalRainbowColors() {
-
 }
 function handleKeyDown(e) {
     if (rainbow) generateNewColor();
@@ -335,8 +310,6 @@ function handleKeyDown(e) {
         myCursor.stepBack(bodySize, moveCursor);
         e.preventDefault();
     }
-    //console.log("pressed " + e.key + " " + e.keyCode);
-    //console.log(typedCharacters.join(""));
 }
 function setDocumentTitle(newName) {
     document.getElementById("docTitle").textContent = newName;
@@ -352,12 +325,9 @@ function setDocumentTitle(newName) {
 async function pasteText(){
     const text = await navigator.clipboard.readText();
     interruptPaste = false;
-    //console.log(interruptPaste);
     spawnString(text, text.length - 1);
-    console.log(text);
 }
 function addKeyListeners() {
-    console.log("adding keypress listener");
     window.addEventListener("keydown", handleKeyDown, false);
 
     listener.simple_combo("ctrl z", function () {
@@ -368,7 +338,6 @@ function addKeyListeners() {
     });
 
     listener.simple_combo("ctrl shift z", function () {
-        console.log("yeee");
         redo();
     });
 
@@ -396,7 +365,6 @@ function addKeyListeners() {
     listener.simple_combo("cmd v", function () {
         pasteText();
     });
-
     listener.sequence_combo("up up down down left right left right b a enter", function () {
         console.log("The inner machinations of my mind are an enigma. – Patrick Star");
         if (theImgBody.inWorld) removeImgBody(theImgBody);
@@ -408,7 +376,7 @@ function addKeyListeners() {
         else addImgBody(goodJobImgBody);
     }, true);
     listener.sequence_combo("down r o y g b i v down enter", function () {
-        console.log("😎😎😎");
+        console.log("🌈😎😎😎🌈");
         rainbow = !rainbow;
     }, true);
     listener.sequence_combo("left left right right left right enter", function () {
@@ -435,7 +403,6 @@ function addKeyListeners() {
     }, true);
 }
 function removeKeyListeners() {
-    console.log("removing keypress listener");
     window.removeEventListener("keydown", handleKeyDown, false);
 }
 function spawnChar(c) {
@@ -445,7 +412,6 @@ function spawnChar(c) {
     typedCharacters.push(c);
     updateWordStats();
 }
-
 function removeImgBody(imgBody) {
     imgBody.remove();
     for (var i = 0; i < images.length; i++) {
@@ -460,7 +426,6 @@ function addImgBody(imgBody) {
 }
 function spawnString(s, i) {
     setTimeout(function () {
-        //console.log("spawning char "+ s[s.length-1-i]+" "+ i); //  your code here  
         spawnChar(s[s.length-1-i]);
         if (i-- && !interruptPaste) spawnString(s, i);
     }, 10)
