@@ -431,7 +431,7 @@ function addKeyListeners() {
         spawnString(star, star.length - 1);
     }, true);
     listener.sequence_combo("right down left up right down left up enter", function () {
-        console.log("What about the reality where Hitler cured cancer, Morty? The answer is: don’t think about it.");
+        console.log("What about the reality where Hitler cured cancer, Morty? The answer is: don't think about it.");
         shouldRotate = !shouldRotate;
     }, true);
 }
