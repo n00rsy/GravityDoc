@@ -11,6 +11,10 @@ let world, engine;
 let mouseConstraint;
 let canvas, canvasSize, fps;
 
+let wordCount = document.getElementById("wordCount");
+let charCount = document.getElementById("charCount")
+let fpsStat = document.getElementById("fpsStat")
+
 let font, fontSize, fontStyle, underline, bodySize, textColor;
 let textOffsetX, textOffsetY;
 let gravityStrength, exitForce, randomForce;
@@ -51,7 +55,7 @@ function setup() {
     setMoveCursor();
     setDocumentTitle("Gravity Doc");
     addKeyListeners();
-
+    showFPS();
     rainbow = false;
     shouldRotate = false;
     sideWalls = true;
@@ -88,10 +92,6 @@ function mouseClicked(event) {
         //move cursor to location if inside page
         myCursor.x = mouseX;
         myCursor.y = mouseY;
-
-    }
-    else {
-        //dont show cursor
     }
 }
 
@@ -261,7 +261,6 @@ function setMoveCursor() {
     moveCursor = document.getElementById("moveCursor").checked;
 }
 
-
 function setExitForce() {
     exitForce = document.getElementById("exitForce").value / 5;
 }
@@ -403,12 +402,12 @@ function addKeyListeners() {
         if (theImgBody.inWorld) removeImgBody(theImgBody);
         else addImgBody(theImgBody);
     }, true);
-    listener.sequence_combo("a b c right left right left up down down up a b c enter", function () {
+    listener.sequence_combo("a b c right left left up down up a b c enter", function () {
         console.log("Keep it up!");
         if (goodJobImgBody.inWorld) removeImgBody(goodJobImgBody);
         else addImgBody(goodJobImgBody);
     }, true);
-    listener.sequence_combo("r o y g b i v down down enter", function () {
+    listener.sequence_combo("down r o y g b i v down enter", function () {
         console.log("😎😎😎");
         rainbow = !rainbow;
     }, true);
@@ -444,6 +443,7 @@ function spawnChar(c) {
     var r = Math.random() * randomForce - randomForce / 2;
     letters.push(new Letter(myCursor.x, myCursor.y, bodySize, c, font, fontSize, textOffsetX, textOffsetY, exitForce, r, fontStyle, underline, textColor));
     typedCharacters.push(c);
+    updateWordStats();
 }
 
 function removeImgBody(imgBody) {
@@ -474,6 +474,19 @@ function rotateGravity(){
     world.gravity.y = Math.sin(a)*gravityStrength;
     a+=rotateStep;
 }
+
+function showFPS() {
+    setTimeout(function () {
+        fpsStat.textContent = getFrameRate().toFixed(1);
+        showFPS();
+    }, 1000)
+}
+
+function updateWordStats(){
+    charCount.textContent = letters.length;
+    //wordCount.textContent = (letters.match(/ /g) || []).length; 
+}
+
 function draw() {
     if(shouldRotate) rotateGravity();
     background(255);
@@ -485,6 +498,6 @@ function draw() {
     rightWall.show_debug();
     topWall.show_debug();
     bottomWall.show_debug();
-*/
+    */
     myCursor.show(bodySize);
 }

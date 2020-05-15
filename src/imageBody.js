@@ -22,10 +22,6 @@ class ImageBody {
         this.drawImg();
         pop();
     }
-
-
-    
-
     drawNormalImg(){
         noFill();
         rectMode(CENTER);
