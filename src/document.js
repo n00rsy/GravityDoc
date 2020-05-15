@@ -9,16 +9,13 @@ let myCursor;
 let bottomWall, topWall, rightWall, leftWall;
 let world, engine;
 let mouseConstraint;
-
 let canvas, canvasSize, fps;
 
 let font, fontSize, fontStyle, underline, bodySize, textColor;
 let textOffsetX, textOffsetY;
 let gravityStrength, exitForce, randomForce;
 let cursorBoundX, cursorBoundY;
-
 let moveCursor, spaceChars;
-
 let sideWalls, interruptPaste, rainbow, shouldRotate;
 
 var listener = new window.keypress.Listener();
@@ -28,10 +25,9 @@ let goodJob, goodJobImgBody;
 function preload() {
     // preload() runs once
     console.log("new update 1");
-    the = loadImage("src/img/assets/the.png");
-    goodJob = loadImage("src/img/assets/goodJob.png");
+    the = loadImage("img/assets/the.png");
+    goodJob = loadImage("img/assets/goodjob.png");
 }
-
 
 function setup() {
     fps = 60;
@@ -54,21 +50,18 @@ function setup() {
     setTextColor();
     setMoveCursor();
     setDocumentTitle("Gravity Doc");
+    addKeyListeners();
+
     rainbow = false;
     shouldRotate = false;
     sideWalls = true;
     interruptPaste = false;
-    addKeyListeners();
 
     var marginSize = width * 0.125;
     theImgBody = new ImageBody(100, 100, the);
     theImgBody.remove();
     goodJobImgBody = new ImageBody(100, 200, goodJob);
     goodJobImgBody.remove();
-
-
-
-
 
     bottomWall = new Boundary(width / 2, height - (marginSize / 2), width, marginSize);
     topWall = new Boundary(width / 2, (marginSize / 2), width, marginSize);
@@ -99,7 +92,6 @@ function mouseClicked(event) {
     }
     else {
         //dont show cursor
-
     }
 }
 
@@ -124,13 +116,6 @@ function undo() {
         letters[letters.length - 1].remove();
         deletedLetters.push(letters.pop());
     }
-    /*
-    if (c != "\t" && c != "\n" && (c == " " &&spaceChars) && letters.length > 0) {
-        letters[letters.length - 1].remove();
-        deletedLetters.push(letters.pop());
-    }
-    */
-
 }
 
 function redo() {
@@ -298,7 +283,6 @@ function setSpaceChars() {
 function updateGlobalRainbowColors() {
 
 }
-
 function handleKeyDown(e) {
     if (rainbow) generateNewColor();
     if ((e.keyCode >= 186 && e.keyCode <= 192) || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 219 && e.keyCode <= 222)) {
@@ -355,7 +339,6 @@ function handleKeyDown(e) {
     //console.log("pressed " + e.key + " " + e.keyCode);
     //console.log(typedCharacters.join(""));
 }
-
 function setDocumentTitle(newName) {
     document.getElementById("docTitle").textContent = newName;
     document.title = newName;
@@ -374,7 +357,6 @@ async function pasteText(){
     spawnString(text, text.length - 1);
     console.log(text);
 }
-
 function addKeyListeners() {
     console.log("adding keypress listener");
     window.addEventListener("keydown", handleKeyDown, false);
@@ -448,17 +430,15 @@ function addKeyListeners() {
         var star = "Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not. It’s not a story the Jedi would tell you. It’s a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life…";
         spawnString(star, star.length - 1);
     }, true);
-    listener.sequence_combo("right down left up enter", function () {
+    listener.sequence_combo("right down left up right down left up enter", function () {
         console.log("What about the reality where Hitler cured cancer, Morty? The answer is: don’t think about it.");
         shouldRotate = !shouldRotate;
     }, true);
 }
-
 function removeKeyListeners() {
     console.log("removing keypress listener");
     window.removeEventListener("keydown", handleKeyDown, false);
 }
-
 function spawnChar(c) {
     myCursor.step(bodySize, moveCursor);
     var r = Math.random() * randomForce - randomForce / 2;
@@ -478,7 +458,6 @@ function addImgBody(imgBody) {
     imgBody.add();
     images.push(imgBody);
 }
-
 function spawnString(s, i) {
     setTimeout(function () {
         //console.log("spawning char "+ s[s.length-1-i]+" "+ i); //  your code here  
@@ -486,7 +465,6 @@ function spawnString(s, i) {
         if (i-- && !interruptPaste) spawnString(s, i);
     }, 10)
 }
-
 var a = 0.0;
 var twoPI = Math.PI*2;
 var rotateStep = Math.PI*0.01;
@@ -496,7 +474,6 @@ function rotateGravity(){
     world.gravity.y = Math.sin(a)*gravityStrength;
     a+=rotateStep;
 }
-
 function draw() {
     if(shouldRotate) rotateGravity();
     background(255);
