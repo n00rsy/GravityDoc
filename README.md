@@ -11,7 +11,7 @@ The physics simulation x text editor you've always wanted. Visit the site [here]
 ## Implementation
 
 ### Physics and Rendering
-Physics simulation is powered by matter.js. Although matter.js ships with its own renderer, it is quite limited and offers very little customization. I opted to create a custom integration of p5.js for rendering, which came with the added benefits of simpler syntax and better performance.
+Physics simulation is powered by matter.js, rendering with p5.js. I got these libraries to work together somehow.
 ### Hotkeys and Cheatcodes
 Keypress handles all key combinations. Special thanks to David Mauro for putting out his awesome library!
 ### Styling and Layout
