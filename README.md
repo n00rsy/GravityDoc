@@ -16,6 +16,3 @@ Physics simulation is powered by matter.js, rendering with p5.js. I got these li
 Keypress handles all key combinations. Special thanks to David Mauro for putting out his awesome library!
 ### Styling and Layout
 HTML/ CSS was my least favorite part of this project. Lets not talk about it.
-
-## Deployment
-Deployed via an AWS S3 bucket routed through Cloudfront for HTTPS.
