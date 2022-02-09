@@ -1,5 +1,5 @@
 # GravityDoc
-The physics simulation x text editor you've always wanted. Visit the site [here](https://gravity-doc.com/).
+The physics simulation x text editor you've always wanted.
 
 ![](img/gravitydoc.gif)
 
@@ -13,6 +13,6 @@ The physics simulation x text editor you've always wanted. Visit the site [here]
 ### Physics and Rendering
 Physics simulation is powered by matter.js, rendering with p5.js. I got these libraries to work together somehow.
 ### Hotkeys and Cheatcodes
-Keypress handles all key combinations. Special thanks to David Mauro for putting out his awesome library!
+They exist.
 ### Styling and Layout
 HTML/ CSS was my least favorite part of this project. Lets not talk about it.
