@@ -6,7 +6,7 @@ The physics simulation x text editor you've always wanted.
 ## Core Features:
 * Changing force settings in real time
 * Handling basic text editing instructions like copy (ctrl c), paste (ctrl v), save (ctrl s), etc
-* Cheatcodes and their features, which shall be kept secret, unless you poke around in the source code
+* Cheatcodes
 
 ## Implementation
 
